@@ -3,6 +3,9 @@ import org.vu.contest.ContestEvaluation;
 
 import java.util.Random;
 import java.util.Properties;
+import java.io.File;
+import java.util.Arrays;
+import java.lang.Object;
 
 
 public class player40 implements ContestSubmission
@@ -45,32 +48,59 @@ public class player40 implements ContestSubmission
 
         int evals = 0;
 				int population_size = 100;
-				double[][] parents = new double[population_size][10];
+				Parent[] parents = new Parent[population_size];
        	for (int i = 0; i < population_size; i++){
-					double[] parent = new double[10];
+					double[] functionValues = new double[10];
 					for(int j=0; j<10; j++){
-						parent[j] = randomNumber(-5.0,5.0);
+						functionValues[j] = randomNumber(-5.0,5.0);
 					}
-					parents[i] = parent;
+					Parent currentParent = new Parent(functionValues, i);
+					currentParent.fitness = (double) evaluation_.evaluate(currentParent.values);
+					parents[i] = currentParent;
        	}
 
-
-
-				for (int i = 0; i < 10; i++){
-					Double fitness_parent = (double) evaluation_.evaluate(parents[i]);
-					System.out.println("Fitness for parent " + i + "    " + fitness_parent);
+				for (int i = 0; i < 20; i++){
+					System.out.println("Fitness for parent " + i + "    " + parents[i].fitness);
 				}
 
 
-        while(evals<evaluations_limit_){
+        //while(evals<evaluations_limit_){
+				while(evals<1){
             // Select parents
             // Apply crossover / mutation operators
-            double child[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+						Parent parent1 = parents[0];
 
+						Parent parent2 = parents[1];
+						System.out.println("DNA parent 1: ");
+						for(int i = 0; i<10; i++){
+							System.out.println(parent1.values[i]);
+						}
+						System.out.println("===================");
+						System.out.println("DNA parent 2: ");
+						for(int i = 0; i<10; i++){
+							System.out.println(parent2.values[i]);
+						}
+
+						System.out.println("===================");
+						double[] dna1 = Arrays.copyOfRange(parent1.values, 0, 5);
+						double[] dna2 = Arrays.copyOfRange(parent2.values, 5, 10);
+						double[] dna = new double[10];
+						for(int i = 0; i<5; i++){
+							dna[i] = dna1[i];
+						}
+						for(int i = 5; i<10; i++){
+							dna[i] = dna2[i-5];
+						}
+
+
+						Parent child = new Parent(dna, 1000);
+						System.out.println("DNA child: ");
+						for(int i = 0; i<10; i++){
+							System.out.println(child.values[i]);
+						}
             // Check fitness of unknown fuction
-            Double fitness = (double) evaluation_.evaluate(child);
+            Double fitness = (double) evaluation_.evaluate(child.values);
 
-						Parent parent1 = new Parent(child, fitness, 1);
             evals++;
             // Select survivors
         }
