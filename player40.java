@@ -62,9 +62,9 @@ public class player40 implements ContestSubmission
 		for (int i = 0; i < population_size; i++){
 			double[] functionValues = new double[DIMENSION];
 			for(int j=0; j<DIMENSION; j++){
-				functionValues[j] = randomNumber(-MAX_RANGE, MAX_RANGE);
+				functionValues[j] = randomDouble(-MAX_RANGE, MAX_RANGE);
 			}
-			Elephant currentElephant = new Elephant(functionValues, i);
+			Elephant currentElephant = new Elephant(functionValues);
 			currentElephant.fitness = (double) evaluation_.evaluate(currentElephant.values);
 			parents[i] = currentElephant;
 		}
@@ -79,7 +79,7 @@ public class player40 implements ContestSubmission
 			for (Elephant e : parents) {
 				for (int i=0; i<DIMENSION; i++) {
 					if (random.nextDouble() < mutation_probability) {
-						e.values[i] = randomNumber(-MAX_RANGE, MAX_RANGE);
+						e.values[i] = randomDouble(-MAX_RANGE, MAX_RANGE);
 					}
 				}
 			}
@@ -100,7 +100,7 @@ public class player40 implements ContestSubmission
 			}
 
 			//A baby-elephant is born!;
-			Elephant child = new Elephant(dna, 1000);
+			Elephant child = new Elephant(dna);
 
 
 			// Check fitness of unknown fuction
@@ -119,7 +119,15 @@ public class player40 implements ContestSubmission
 		}
 	}
 
-	public double randomNumber(double min, double max){
+	public Elephant mutate(Elephant elephant) {
+		return new Elephant(new double[10]);
+	}
+
+	public Elephant mate(Elephant mother, Elephant father) {
+		return new Elephant(new double[10]);
+	}
+
+	public double randomDouble(double min, double max){
 		double random_num = (random.nextDouble() * ((max - min) + 1)) + min;
 		return random_num;
 	}

@@ -5,11 +5,9 @@ import java.util.Comparator;
 public class Elephant implements Comparable<Object>{
 	public double[] values = new double[10];
 	public double fitness = 0.0;
-	public int index = 0; // check if needed
 
-	public Elephant(double[] values, int index){
+	public Elephant(double[] values){
 		this.values = values;
-		this.index = index;
 	}
 
 	public double getFitness(){
