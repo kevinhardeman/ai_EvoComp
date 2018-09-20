@@ -1,4 +1,4 @@
-COMPILE = javac -cp contest.jar player40.java Elephant.java
+COMPILE = javac -cp contest.jar Elephant.java player40.java 
 RUN = java -jar testrun.jar -submission=player40 -seed=1
 
 start:
