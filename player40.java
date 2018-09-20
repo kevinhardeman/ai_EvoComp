@@ -8,6 +8,9 @@ import java.lang.Object;
 
 public class player40 implements ContestSubmission
 {
+
+	static int DIMENSION = 10;
+
 	Random rnd_;
 	ContestEvaluation evaluation_;
 	private int evaluations_limit_;
@@ -40,6 +43,8 @@ public class player40 implements ContestSubmission
 	}
 
 	public void run() {
+
+		Random random = new Random();
 		// Initialization of population
 		//The genotype is stored in parents[i].values."
 		//The fitness of every parent is calculated and saved in parents[i].fitness"
@@ -63,15 +68,15 @@ public class player40 implements ContestSubmission
 			//Mutation
 			// TODO
 
-			//Crossover";
-			double[] dna1 = Arrays.copyOfRange(parents[0].values, 0, 5);
-			double[] dna2 = Arrays.copyOfRange(parents[1].values, 5, 10);
-			double[] dna = new double[10];
-			for(int i = 0; i<5; i++){
-				dna[i] = dna1[i];
-			}
-			for(int i = 5; i<10; i++){
-				dna[i] = dna2[i-5];
+			//Crossover
+			int crossover_point = random.nextInt() % DIMENSION;
+			
+			Elephant parent0 = parents[0];
+			Elephant parent1 = parents[1];
+			double[] dna = new double[DIMENSION];
+
+			for (int i=0; i<DIMENSION; i++) {
+				dna[i] = (i > crossover_point) ? parent0.values[i] : parent1.values[i];
 			}
 
 			//A baby-elephant is born!;
