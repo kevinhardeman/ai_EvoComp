@@ -5,6 +5,8 @@ import java.util.Random;
 import java.util.Properties;
 import java.util.Arrays;
 import java.lang.Object;
+import java.util.ArrayList;
+import java.util.*;
 
 public class player40 implements ContestSubmission
 {
@@ -56,8 +58,6 @@ public class player40 implements ContestSubmission
 		//The fitness of every parent is calculated and saved in parents[i].fitness"
 
 		int evals = 0;
-
-
 		Elephant[] parents = new Elephant[population_size];
 		for (int i = 0; i < population_size; i++){
 			double[] functionValues = new double[DIMENSION];
@@ -68,7 +68,7 @@ public class player40 implements ContestSubmission
 			currentElephant.fitness = (double) evaluation_.evaluate(currentElephant.values);
 			parents[i] = currentElephant;
 		}
-
+		Arrays.sort(parents); // sort parents based on fitness
 		//while(evals<evaluations_limit_){
 		while(evals<1){
 
