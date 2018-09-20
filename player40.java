@@ -71,41 +71,23 @@ public class player40 implements ContestSubmission
 
 		//while(evals<evaluations_limit_){
 		while(evals<1){
-		// Select parents
-		// Apply crossover / mutation operators
+
+			// Select parents - TODO: Select More and Better
+			Elephant mother = parents[0];
+			Elephant father = parents[1];
+			
+			// Apply crossover / mutation operators
 
 			// Mutation
-			// Fixed chance 'mutation_probability' per allele to mutate to random value within MAX_RANGE
-			for (Elephant e : parents) {
-				for (int i=0; i<DIMENSION; i++) {
-					if (random.nextDouble() < mutation_probability) {
-						e.values[i] = randomDouble(-MAX_RANGE, MAX_RANGE);
-					}
-				}
+			for (Elephant elephant : parents) {
+				elephant = mutate(elephant, mutation_probability);
 			}
 
 			// Crossover
-			// 1. Pick top two parents (change this!)
-			// 2. Pick random crossover point [0-9]
-			// 3. Create new Elephant!
-			Elephant parent0 = parents[0];
-			Elephant parent1 = parents[1];
-
-			int crossover_point = random.nextInt() % DIMENSION;
-
-			double[] dna = new double[DIMENSION];
-
-			for (int i=0; i<DIMENSION; i++) {
-				dna[i] = (i > crossover_point) ? parent0.values[i] : parent1.values[i];
-			}
-
-			//A baby-elephant is born!;
-			Elephant child = new Elephant(dna);
-
+			Elephant child = mate(mother, father);
 
 			// Check fitness of unknown fuction
 			Double fitness = (double) evaluation_.evaluate(child.values);
-
 			for(int i = 0; i < child.values.length; i++){
 					System.out.println(child.values[i]);
 			}
@@ -119,12 +101,29 @@ public class player40 implements ContestSubmission
 		}
 	}
 
-	public Elephant mutate(Elephant elephant) {
-		return new Elephant(new double[10]);
+	public Elephant mutate(Elephant elephant, double probability) {
+		// Fixed chance 'mutation_probability' per allele to mutate to random value within MAX_RANGE
+		
+		for (int i=0; i<DIMENSION; i++) {
+			if (random.nextDouble() < probability) {
+				elephant.values[i] = randomDouble(-MAX_RANGE, MAX_RANGE);
+			}
+		}
+		return elephant;
 	}
 
 	public Elephant mate(Elephant mother, Elephant father) {
-		return new Elephant(new double[10]);
+		// Crossover using random crossover point
+
+		double[] dna = new double[DIMENSION];
+		int crossover_point = random.nextInt() % DIMENSION;
+
+		for (int i=0; i<DIMENSION; i++) {
+			dna[i] = (i > crossover_point) ? mother.values[i] : father.values[i];
+		}
+
+		//A baby-elephant is born!;
+		return new Elephant(dna);
 	}
 
 	public double randomDouble(double min, double max){
