@@ -80,7 +80,9 @@ public class player40 implements ContestSubmission
 			// Check fitness of unknown fuction
 			Double fitness = (double) evaluation_.evaluate(child.values);
 
-			System.out.println(child.values);  //This don't work?
+			for(int i = 0; i < child.values.length; i++){
+					System.out.println(child.values[i]);
+			}
 			System.out.println(fitness);
 
 			evals++;
