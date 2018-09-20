@@ -10,20 +10,22 @@ public class player40 implements ContestSubmission
 {
 
 	static int DIMENSION = 10;
+	static double MAX_RANGE = 5.0;
 
-	Random rnd_;
+	Random random;
 	ContestEvaluation evaluation_;
+
 	private int evaluations_limit_;
 
 	public player40()
 	{
-		rnd_ = new Random();
+		random = new Random();
 	}
 
 	public void setSeed(long seed)
 	{
 		// Set seed of algortihms random process
-		rnd_.setSeed(seed);
+		random.setSeed(seed);
 	}
 
 	public void setEvaluation(ContestEvaluation evaluation)
@@ -44,17 +46,23 @@ public class player40 implements ContestSubmission
 
 	public void run() {
 
-		Random random = new Random();
+
+		// Algorithm Parameters
+		int population_size = 100;
+		double mutation_probability = 0.01;
+
 		// Initialization of population
 		//The genotype is stored in parents[i].values."
 		//The fitness of every parent is calculated and saved in parents[i].fitness"
+
 		int evals = 0;
-		int population_size = 100;
+
+
 		Elephant[] parents = new Elephant[population_size];
 		for (int i = 0; i < population_size; i++){
-			double[] functionValues = new double[10];
-			for(int j=0; j<10; j++){
-				functionValues[j] = randomNumber(-5.0,5.0);
+			double[] functionValues = new double[DIMENSION];
+			for(int j=0; j<DIMENSION; j++){
+				functionValues[j] = randomNumber(-MAX_RANGE, MAX_RANGE);
 			}
 			Elephant currentElephant = new Elephant(functionValues, i);
 			currentElephant.fitness = (double) evaluation_.evaluate(currentElephant.values);
@@ -65,14 +73,26 @@ public class player40 implements ContestSubmission
 		while(evals<1){
 		// Select parents
 		// Apply crossover / mutation operators
-			//Mutation
-			// TODO
 
-			//Crossover
-			int crossover_point = random.nextInt() % DIMENSION;
-			
+			// Mutation
+			// Fixed chance 'mutation_probability' per allele to mutate to random value within MAX_RANGE
+			for (Elephant e : parents) {
+				for (int i=0; i<DIMENSION; i++) {
+					if (random.nextDouble() < mutation_probability) {
+						e.values[i] = randomNumber(-MAX_RANGE, MAX_RANGE);
+					}
+				}
+			}
+
+			// Crossover
+			// 1. Pick top two parents (change this!)
+			// 2. Pick random crossover point [0-9]
+			// 3. Create new Elephant!
 			Elephant parent0 = parents[0];
 			Elephant parent1 = parents[1];
+
+			int crossover_point = random.nextInt() % DIMENSION;
+
 			double[] dna = new double[DIMENSION];
 
 			for (int i=0; i<DIMENSION; i++) {
@@ -82,23 +102,25 @@ public class player40 implements ContestSubmission
 			//A baby-elephant is born!;
 			Elephant child = new Elephant(dna, 1000);
 
+
 			// Check fitness of unknown fuction
 			Double fitness = (double) evaluation_.evaluate(child.values);
 
 			for(int i = 0; i < child.values.length; i++){
 					System.out.println(child.values[i]);
 			}
-			System.out.println(fitness);
-
-			evals++;
 
 			//Select survivors;
 			// TODO
+
+
+			System.out.println(fitness);
+			evals++;
 		}
 	}
 
 	public double randomNumber(double min, double max){
-		double random_num = (Math.random() * ((max - min) + 1)) + min;
+		double random_num = (random.nextDouble() * ((max - min) + 1)) + min;
 		return random_num;
 	}
 }
