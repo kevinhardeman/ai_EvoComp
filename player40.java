@@ -130,11 +130,23 @@ public class player40 implements ContestSubmission
 		return new Elephant(evaluation, dna, mother, father);
 	}
 
-	public Elephant[] select(Elephant[] population, int output_size) {
-		return new Elephant[output_size];
+	// Implementation for tournament selection (Kevin)
+	public Elephant[] select(Elephant[] population, int output_size, int tournament_size) {
+		Elephant[] output = new Elephant[output_size];
+		for (i = 0, i < output_size, i++){
+			//Elephant[] tournament = new Elephant[tournament_size];
+			//for (j = 0, j < tournament_size, j++){
+			//	int randomNumber = int(randomDouble(1,Array.getLength(population)));
+				//tournament[j] = population[randomNumber]
+			//}
+			int randomNumber = int(randomDouble(1,Array.getLength(population)));
+			output[i] = population[randomNumber];
+		}
+		return output;
 	}
 
 	public double randomDouble(double min, double max){
 		return (random.nextDouble() * ((max - min) + 1)) + min;
 	}
+
 }
