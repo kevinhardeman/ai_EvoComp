@@ -49,12 +49,12 @@ public class player40 implements ContestSubmission
 	public void run() {
 		// Algorithm Parameters
 		int population_size = 1000;
-		int tournament_size = 5;
+		int tournament_size = 10;
 		double mutation_probability = 0.01;
 
 		Elephant[] population = initiate(population_size);
 
-		for (int i=0; i<100; i++){
+		for (int i=0; i<10; i++){
 
 			Elephant[] children = new Elephant[population_size];
 
@@ -67,6 +67,7 @@ public class player40 implements ContestSubmission
 
 				// Create child by mating parents and mutating result
 				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
+				children[j].updateFitness();
 			}
 
 			population = concatenate(population, children);
@@ -83,6 +84,7 @@ public class player40 implements ContestSubmission
 
 		for (int i = 0; i < population_size; i++) {
 			parents[i] = new Elephant(evaluation, random);
+			parents[i].updateFitness();
 		}
 
 		Arrays.sort(parents); // sort parents based on fitness
