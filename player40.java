@@ -51,25 +51,29 @@ public class player40 implements ContestSubmission
 
 		// Algorithm Parameters
 		int population_size = 100;
+		int tournament_size = 5;
 		double mutation_probability = 0.01;
 
 		Elephant[] population = initiate(population_size);
 
-		for (int i=0; i<evaluations_limit; i++){
+		for (int i=0; i<100; i++){
 
 			Elephant[] children = new Elephant[population_size];
 
 			for (int j=0; j<population_size; j++) {
 
 				// Select Parents from population
-				Elephant[] parents = select(population, 2);
+				Elephant[] parents = select(population, 2, tournament_size);
+
+				Elephant child = new Elephant(evaluation, random);
 
 				// Create child by mating parents and mutating result
-				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
+				children[j] = mate(parents[0], parents[1]);
+				
 			}
 
 			population = concatenate(population, children);
-			population = select(population, population_size);
+			population = select(population, population_size, tournament_size);
 		}
 	}
 
@@ -116,14 +120,14 @@ public class player40 implements ContestSubmission
 	// Implementation for tournament selection (Kevin)
 	public Elephant[] select(Elephant[] population, int output_size, int tournament_size) {
 		Elephant[] output = new Elephant[output_size];
-		for (i = 0, i < output_size, i++){
+		for (int i = 0; i < output_size; i++){
 			//Elephant[] tournament = new Elephant[tournament_size];
 			//for (j = 0, j < tournament_size, j++){
 			//	int randomNumber = int(randomDouble(1,Array.getLength(population)));
 				//tournament[j] = population[randomNumber]
 			//}
-			int randomNumber = int(randomDouble(1,Array.getLength(population)));
-			output[i] = population[randomNumber];
+
+			output[i] = population[random.nextInt(population.length)];
 		}
 		return output;
 	}
@@ -132,15 +136,21 @@ public class player40 implements ContestSubmission
 		return (random.nextDouble() * ((max - min) + 1)) + min;
 	}
 
-	public <T> T[] concatenate(T[] a, T[] b) {
-	    int aLen = a.length;
-	    int bLen = b.length;
+	public Elephant[] concatenate(Elephant[] a, Elephant[] b) {
+		Elephant[] c = new Elephant[a.length + b.length];
 
-	    @SuppressWarnings("unchecked")
-	    T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
-	    System.arraycopy(a, 0, c, 0, aLen);
-	    System.arraycopy(b, 0, c, aLen, bLen);
+		int index = 0;
 
-    return c;
+		for (int i=0; i<a.length; i++) {
+			c[index] = a[i];
+			index++;
+		}
+
+		for (int i=0; i<b.length; i++) {
+			c[index] = b[i];
+			index++;
+		}
+
+    	return c;
 	}
 }
