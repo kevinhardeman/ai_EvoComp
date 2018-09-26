@@ -14,8 +14,8 @@ public class Elephant implements Comparable<Object>{
 	private Elephant father = null;
 
 	private double[] values;
-	private double fitness = -1.0;
-	private double novelty = -1.0;
+	private double fitness = 0.0;
+	private double novelty = 0.0;
 
 	private ContestEvaluation evaluation;
 
@@ -26,6 +26,8 @@ public class Elephant implements Comparable<Object>{
 		for (int j=0; j<DIMENSION; j++) {
 			this.values[j] = randomDouble(random, -MAX_RANGE, MAX_RANGE);
 		}
+
+		updateFitness(this.values);
 	}
 
 	public Elephant(ContestEvaluation evaluation, double[] values, Elephant mother, Elephant father){
@@ -34,6 +36,9 @@ public class Elephant implements Comparable<Object>{
 
 		this.mother = mother;
 		this.father = father;
+
+		updateFitness(this.values);
+		updateNovelty(this.values, this.mother, this.father);
 	}
 
 	public Elephant getMother() {
@@ -56,23 +61,23 @@ public class Elephant implements Comparable<Object>{
 		return novelty;
 	}
 
-	public double getScore() {
-		// TODO: Linear Blend!
-		return (getFitness() + getNovelty()) / 2;
+	public double getScore(int p) {
+
+		return (getFitness() * p + (1 - p) *getNovelty());
 	}
 
 	public int compareTo(Object e) {
 		return Double.compare(((Elephant)e).getFitness(), this.getFitness());
 	}
 
-	public void updateFitness() {
-		try { this.fitness = (double) this.evaluation.evaluate(this.values); }
+	private void updateFitness(double[] values) {
+		try { this.fitness = (double) this.evaluation.evaluate(values); }
 		catch(NullPointerException e) {
 			throw new RuntimeException("Exceeded computational budget!");
 		}	
 	}
 
-	public void updateNovelty() {
+	private void updateNovelty(double[] values, Elephant mother, Elephant father) {
 		this.novelty = 0.0; // TODO: Implement
 	}
 
