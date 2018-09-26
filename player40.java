@@ -15,7 +15,7 @@ public class player40 implements ContestSubmission
 	static double MAX_RANGE = 5.0;
 
 	Random random;
-	ContestEvaluation evaluation_;
+	ContestEvaluation evaluation;
 
 	private int evaluations_limit_;
 
@@ -33,7 +33,7 @@ public class player40 implements ContestSubmission
 	public void setEvaluation(ContestEvaluation evaluation)
 	{
 		// Set evaluation problem used in the run
-		evaluation_ = evaluation;
+		this.evaluation = evaluation;
 
 		// Get evaluation properties
 		Properties props = evaluation.getProperties();
@@ -58,18 +58,9 @@ public class player40 implements ContestSubmission
 		//The fitness of every parent is calculated and saved in parents[i].fitness"
 
 		int evals = 0;
-		Elephant[] parents = new Elephant[population_size];
-		for (int i = 0; i < population_size; i++){
-			double[] functionValues = new double[DIMENSION];
-			for(int j=0; j<DIMENSION; j++){
-				functionValues[j] = randomDouble(-MAX_RANGE, MAX_RANGE);
-			}
-			Elephant currentElephant = new Elephant(functionValues);
-			currentElephant.fitness = (double) evaluation_.evaluate(currentElephant.values);
-			parents[i] = currentElephant;
-		}
-		Arrays.sort(parents); // sort parents based on fitness
-		//while(evals<evaluations_limit_){
+
+		Elephant[] parents = initiate(population_size);
+
 		while(evals<1){
 
 			// Select parents - TODO: Select More and Better
@@ -87,18 +78,32 @@ public class player40 implements ContestSubmission
 			Elephant child = mate(mother, father);
 
 			// Check fitness of unknown fuction
-			Double fitness = (double) evaluation_.evaluate(child.values);
+			Double fitness = (double) evaluation.evaluate(child.values);
 			for(int i = 0; i < child.values.length; i++){
 					System.out.println(child.values[i]);
 			}
 
-			//Select survivors;
-			// TODO
+			// TODO: Select survivors;
+			Arrays.sort(parents);
 
+			for (Elephant parent : parents) {
+				System.out.println(parent.getFitness());
+			}
 
-			System.out.println(fitness);
 			evals++;
 		}
+	}
+
+	public Elephant[] initiate(int population_size) {
+		Elephant[] parents = new Elephant[population_size];
+
+		for (int i = 0; i < population_size; i++) {
+			parents[i] = new Elephant(evaluation, random);
+		}
+
+		Arrays.sort(parents); // sort parents based on fitness
+
+		return parents;
 	}
 
 	public Elephant mutate(Elephant elephant, double probability) {
@@ -123,7 +128,7 @@ public class player40 implements ContestSubmission
 		}
 
 		//A baby-elephant is born!;
-		return new Elephant(dna);
+		return new Elephant(evaluation, random, dna);
 	}
 
 	public double randomDouble(double min, double max){
