@@ -17,7 +17,7 @@ public class player40 implements ContestSubmission
 	Random random;
 	ContestEvaluation evaluation;
 
-	private int evaluations_limit_;
+	private int evaluations_limit;
 
 	public player40()
 	{
@@ -38,7 +38,7 @@ public class player40 implements ContestSubmission
 		// Get evaluation properties
 		Properties props = evaluation.getProperties();
 		// Get evaluation limit
-		evaluations_limit_ = Integer.parseInt(props.getProperty("Evaluations"));
+		evaluations_limit = Integer.parseInt(props.getProperty("Evaluations"));
 		// Property keys depend on specific evaluation
 		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
 		boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
@@ -51,42 +51,29 @@ public class player40 implements ContestSubmission
 
 		// Algorithm Parameters
 		int population_size = 100;
+		int tournament_size = 5;
 		double mutation_probability = 0.01;
 
-		// Initialization of population
-		//The genotype is stored in parents[i].values."
-		//The fitness of every parent is calculated and saved in parents[i].fitness"
+		Elephant[] population = initiate(population_size);
 
-		int evals = 0;
+		for (int i=0; i<100; i++){
 
-		Elephant[] parents = initiate(population_size);
+			Elephant[] children = new Elephant[population_size];
 
-		while(evals<1) {
+			for (int j=0; j<population_size; j++) {
 
+				// Select Parents from population
+				Elephant[] parents = select(population, 2, tournament_size);
 
+				Elephant child = new Elephant(evaluation, random);
 
-			// Select parents - TODO: Select More and Better
-			Elephant mother = parents[0];
-			Elephant father = parents[1];
-			
-			// Apply crossover / mutation operators
-
-			// Mutation
-			for (Elephant elephant : parents) {
-				elephant = mutate(elephant, mutation_probability);
+				// Create child by mating parents and mutating result
+				children[j] = mate(parents[0], parents[1]);
+				
 			}
 
-			// Crossover
-			Elephant child = mate(mother, father);
-
-			// TODO: Select survivors;
-			Arrays.sort(parents);
-
-			for (Elephant e : parents) {
-				System.out.println(e.getFitness());
-			}
-
-			evals++;
+			population = concatenate(population, children);
+			population = select(population, population_size, tournament_size);
 		}
 	}
 
@@ -157,4 +144,21 @@ public class player40 implements ContestSubmission
 		return (random.nextDouble() * ((max - min) + 1)) + min;
 	}
 
+	public Elephant[] concatenate(Elephant[] a, Elephant[] b) {
+		Elephant[] c = new Elephant[a.length + b.length];
+
+		int index = 0;
+
+		for (int i=0; i<a.length; i++) {
+			c[index] = a[i];
+			index++;
+		}
+
+		for (int i=0; i<b.length; i++) {
+			c[index] = b[i];
+			index++;
+		}
+
+    	return c;
+	}
 }
