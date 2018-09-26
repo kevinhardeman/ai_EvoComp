@@ -62,7 +62,7 @@ public class Elephant implements Comparable<Object>{
 
 	public double getScore() {
 		// TODO: Linear Blend!
-		return (getFitness() + getNovelty()) / 2
+		return (getFitness() + getNovelty()) / 2;
 	}
 
 	public int compareTo(Object e) {
