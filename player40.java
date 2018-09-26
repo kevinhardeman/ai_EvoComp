@@ -105,6 +105,9 @@ public class player40 implements ContestSubmission
 	}
 
 	public Elephant mate(Elephant mother, Elephant father) {
+		// TODO: Uniform Crossover (Probability per Allele to be either mother/father)
+		// TODO: N-Point Crossover
+
 		// Crossover using random crossover point
 
 		double[] dna = new double[DIMENSION];
