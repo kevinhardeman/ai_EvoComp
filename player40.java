@@ -63,6 +63,8 @@ public class player40 implements ContestSubmission
 
 		while(evals<1){
 
+
+
 			// Select parents - TODO: Select More and Better
 			Elephant mother = parents[0];
 			Elephant father = parents[1];
@@ -103,12 +105,15 @@ public class player40 implements ContestSubmission
 	public Elephant mutate(Elephant elephant, double probability) {
 		// Fixed chance 'mutation_probability' per allele to mutate to random value within MAX_RANGE
 		
+		double[] values = elephant.getValues();
+
 		for (int i=0; i<DIMENSION; i++) {
 			if (random.nextDouble() < probability) {
-				elephant.values[i] = randomDouble(-MAX_RANGE, MAX_RANGE);
+				values[i] = randomDouble(-MAX_RANGE, MAX_RANGE);
 			}
 		}
-		return elephant;
+
+		return new Elephant(evaluation, values, elephant.getMother(), elephant.getFather());
 	}
 
 	public Elephant mate(Elephant mother, Elephant father) {
@@ -118,15 +123,18 @@ public class player40 implements ContestSubmission
 		int crossover_point = random.nextInt() % DIMENSION;
 
 		for (int i=0; i<DIMENSION; i++) {
-			dna[i] = (i > crossover_point) ? mother.values[i] : father.values[i];
+			dna[i] = (i > crossover_point) ? mother.getValues()[i] : father.getValues()[i];
 		}
 
 		//A baby-elephant is born!;
-		return new Elephant(evaluation, random, dna);
+		return new Elephant(evaluation, dna, mother, father);
+	}
+
+	public Elephant[] select(Elephant[] population, int population_size) {
+		return new Elephant[population_size];
 	}
 
 	public double randomDouble(double min, double max){
-		double random_num = (random.nextDouble() * ((max - min) + 1)) + min;
-		return random_num;
+		return (random.nextDouble() * ((max - min) + 1)) + min;
 	}
 }
