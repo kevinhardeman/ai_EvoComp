@@ -133,14 +133,22 @@ public class player40 implements ContestSubmission
 	// Implementation for tournament selection (Kevin)
 	public Elephant[] select(Elephant[] population, int output_size, int tournament_size) {
 		Elephant[] output = new Elephant[output_size];
-		for (i = 0, i < output_size, i++){
-			//Elephant[] tournament = new Elephant[tournament_size];
-			//for (j = 0, j < tournament_size, j++){
-			//	int randomNumber = int(randomDouble(1,Array.getLength(population)));
-				//tournament[j] = population[randomNumber]
-			//}
-			int randomNumber = int(randomDouble(1,Array.getLength(population)));
-			output[i] = population[randomNumber];
+		// Define number of tournaments
+		for (int i = 0; i < output_size; i++){
+			Elephant[] tournament = new Elephant[tournament_size];
+			Elephant bestElephant = null;
+			// Play tournament
+			for (int j = 0; j < tournament_size; j++){
+				if (bestElephant == null){
+					currentElephant = bestElephant;
+				}
+				int randomNumber = Random.nextInt(population.length);
+				Elephant currentElephant = population[randomNumber]
+				if (currentElephant.getFitness() > bestElephant.getFitness()){
+					bestElephant = currentElephant;
+				}
+			}
+			output[i] = bestElephant;
 		}
 		return output;
 	}
