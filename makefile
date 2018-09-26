@@ -6,6 +6,9 @@ RUN = java -jar testrun.jar -submission=player40 -seed=1
 start:
 	export LD_LIBRARY_PATH=.
 
+startkevin:
+	export LD_LIBRARY_PATH=~/Projects/assignment_evocomp/
+
 evocomp1:
 	$(COMPILE) && $(SUBMISSION) && $(RUN) -evaluation=BentCigarFunction
 
