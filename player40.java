@@ -63,6 +63,8 @@ public class player40 implements ContestSubmission
 
 		while(evals<1) {
 
+
+
 			// Select parents - TODO: Select More and Better
 			Elephant mother = parents[0];
 			Elephant father = parents[1];
@@ -128,8 +130,8 @@ public class player40 implements ContestSubmission
 		return new Elephant(evaluation, dna, mother, father);
 	}
 
-	public Elephant[] select(Elephant[] population, int population_size) {
-		return new Elephant[population_size];
+	public Elephant[] select(Elephant[] population, int output_size) {
+		return new Elephant[output_size];
 	}
 
 	public double randomDouble(double min, double max){
