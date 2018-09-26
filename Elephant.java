@@ -71,7 +71,10 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	private void updateFitness(double[] values) {
-		this.fitness = (double) this.evaluation.evaluate(values);
+		try { this.fitness = (double) this.evaluation.evaluate(values); }
+		catch(NullPointerException e) {
+			throw new RuntimeException("Exceeded computational budget!");
+		}	
 	}
 
 	private void updateNovelty(double[] values, Elephant mother, Elephant father) {
