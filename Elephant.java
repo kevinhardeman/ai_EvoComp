@@ -60,6 +60,11 @@ public class Elephant implements Comparable<Object>{
 		return novelty;
 	}
 
+	public double getScore() {
+		// TODO: Linear Blend!
+		return (getFitness() + getNovelty()) / 2
+	}
+
 	public int compareTo(Object e) {
 		return Double.compare(((Elephant)e).getFitness(), this.getFitness());
 	}

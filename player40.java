@@ -61,9 +61,7 @@ public class player40 implements ContestSubmission
 
 		Elephant[] parents = initiate(population_size);
 
-		while(evals<1){
-
-
+		while(evals<1) {
 
 			// Select parents - TODO: Select More and Better
 			Elephant mother = parents[0];
