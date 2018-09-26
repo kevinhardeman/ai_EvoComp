@@ -77,17 +77,11 @@ public class player40 implements ContestSubmission
 			// Crossover
 			Elephant child = mate(mother, father);
 
-			// Check fitness of unknown fuction
-			Double fitness = (double) evaluation.evaluate(child.values);
-			for(int i = 0; i < child.values.length; i++){
-					System.out.println(child.values[i]);
-			}
-
 			// TODO: Select survivors;
 			Arrays.sort(parents);
 
-			for (Elephant parent : parents) {
-				System.out.println(parent.getFitness());
+			for (Elephant e : parents) {
+				System.out.println(e.getFitness());
 			}
 
 			evals++;

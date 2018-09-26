@@ -30,13 +30,12 @@ public class Elephant implements Comparable<Object>{
 		this.values = values;
 	}
 
-	public double getFitness(){
+	public double getFitness() {
 		return (double) evaluation.evaluate(values);
 	}
 
 	public int compareTo(Object e) {
-		Elephant elephant = (Elephant)e;
-		return Double.compare(elephant.getFitness(), this.getFitness());
+		return Double.compare(((Elephant)e).getFitness(), this.getFitness());
 	}
 
 	private double randomDouble(double min, double max){
