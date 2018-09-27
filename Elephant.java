@@ -54,12 +54,12 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	public double getFitness() {
-		if (fitness < 0) updateFitness();
+		if (fitness < 0) updateFitness(this.values);
 		return fitness;
 	}
 
 	public double getNovelty() {
-		if (novelty < 0) updateNovelty();
+		if (novelty < 0) updateNovelty(this.values, this.mother, this.father);
 		return novelty;
 	}
 
