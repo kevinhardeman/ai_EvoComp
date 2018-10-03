@@ -11,7 +11,7 @@ import java.util.*;
 public class player40 implements ContestSubmission
 {
 
-	static int DIMENSION = 10;
+	static int DIMENSION = 11;
 	static double MAX_RANGE = 5.0;
 
 	Random random;
@@ -51,10 +51,13 @@ public class player40 implements ContestSubmission
 		// Algorithm Parameters
 		int population_size = 100;
 		int tournament_size = 5;
-		double mutation_probability = 0.1;
+
+		double mutation_probability = 0.2;
+		double max_sigma = 5.0 / 3.0;
+        
         double linearblend = 0.5; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
 
-		Elephant[] population = initiate(population_size);
+		Elephant[] population = initiate(population_size, max_sigma);
         //List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
         Elephant[] averagesList = new Elephant[0];
         average = calcAverageElephant(population);
@@ -67,8 +70,6 @@ public class player40 implements ContestSubmission
 				// Select Parents from population
 				Elephant[] parents = select(population, 2, tournament_size, average, linearblend);
 
-				Elephant child = new Elephant(evaluation, random);
-
 				// Create child by mating parents and mutating result
 				children[j] = mutate(mate(parents[0], parents[1], 1), mutation_probability);
 			}
@@ -79,20 +80,27 @@ public class player40 implements ContestSubmission
 			population = select(population, population_size, tournament_size, average, linearblend);
 
 			Arrays.sort(population);
-			//System.out.println(popluation[0].getNovelty());
-			System.out.println(population[0].getFitness());
             //TODO: Slowly moves the linearblend function to 1. 
             if(linearblend < 1){
                 linearblend = linearblend + 0.05;
             }
+
+            System.out.print(i);
+            System.out.print(":\t");
+            System.out.print(population[0].getFitness());
+            System.out.print("\t");
+            System.out.print(population[0].getNovelty(average));
+            System.out.print("\t\t");
+            System.out.print(population[0].getValues()[DIMENSION-1]);
+            System.out.println();
 		}
 	}
 
-	public Elephant[] initiate(int population_size) {
+	public Elephant[] initiate(int population_size, double max_sigma) {
 		Elephant[] parents = new Elephant[population_size];
 
 		for (int i = 0; i < population_size; i++) {
-			parents[i] = new Elephant(evaluation, random);
+			parents[i] = new Elephant(evaluation, random, max_sigma);
 		}
 
 		Arrays.sort(parents); // sort parents based on fitness
@@ -108,13 +116,11 @@ public class player40 implements ContestSubmission
 		for (int i=0; i<DIMENSION; i++) {
 			if (random.nextDouble() < probability) {
 				// TODO: Gaussian should be Elephant-specific attribute
-				double mutated_value = values[i] + random.nextGaussian();
+				double mutated_value;
 
-				// New values should still be in function ranges
-				if(mutated_value < -MAX_RANGE || mutated_value > MAX_RANGE){
-					//System.out.println("Mutation failed due to invalid values"); // sanity check print - we don't want infinite loops
-					return mutate(elephant, probability); // try again
-				}
+				do mutated_value = values[i] + values[DIMENSION-1] * random.nextGaussian();
+				while (mutated_value < -MAX_RANGE || mutated_value > MAX_RANGE);  // New values should still be in function ranges
+
 				values[i] = mutated_value;
 			}
 		}
