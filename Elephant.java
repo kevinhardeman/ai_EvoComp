@@ -81,7 +81,7 @@ public class Elephant implements Comparable<Object>{
        //TODO: IMPLEMENT LIST OF PREVIOUS NOVEL BEHAVIOUR to determine current novelty.
         double novelty = 0.0;
         double[] averageValues = average.getValues();
-        for(int i = 0; i < values.length; i++){
+        for(int i = 0; i < values.length - 1; i++){
             novelty = values[i] - averageValues[i];
         }
         novelty = novelty / (MAX_RANGE * 2);

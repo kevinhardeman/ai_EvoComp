@@ -53,15 +53,17 @@ public class player40 implements ContestSubmission
 		int tournament_size = 5;
 
 		double mutation_probability = 0.2;
-		double max_sigma = 10;
+		double max_sigma = 5.0/3.0;
         
         double linearblend = 0.5; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
         double linearblend_delta = 0.05;
 
 		Elephant[] population = initiate(population_size, max_sigma);
-        //List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
+
+        // List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
         Elephant[] averagesList = new Elephant[0];
         average = calcAverageElephant(population);
+
   		for (int i=0; i<evaluations_limit; i++){
 
 			Elephant[] children = new Elephant[population_size];
@@ -72,7 +74,7 @@ public class player40 implements ContestSubmission
 				Elephant[] parents = select(population, 2, tournament_size, average, linearblend);
 
 				// Create child by mating parents and mutating result
-				children[j] = mutate(mate(parents[0], parents[1], 1), mutation_probability);
+				children[j] = mutate(mate(parents[0], parents[1], 3), mutation_probability);
 			}
 
 			population = concatenate(population, children);
@@ -86,7 +88,7 @@ public class player40 implements ContestSubmission
                 linearblend += linearblend_delta;
             }
 
-
+            // Statistics Printout
             double max_novelty = 0.0;
             for (Elephant e : population) {
             	double abs_novelty = Math.abs(e.getNovelty(average));
