@@ -14,8 +14,8 @@ public class Elephant implements Comparable<Object>{
 	private Elephant father = null;
 
 	private double[] values;
-	private double fitness = 0.0;
-	private double novelty = 0.0;
+	private double fitness = -1.0;
+	private double novelty = -1.0;
 
 	private ContestEvaluation evaluation;
 
@@ -26,8 +26,6 @@ public class Elephant implements Comparable<Object>{
 		for (int j=0; j<DIMENSION; j++) {
 			this.values[j] = randomDouble(random, -MAX_RANGE, MAX_RANGE);
 		}
-
-		updateFitness(this.values);
 	}
 
 	public Elephant(ContestEvaluation evaluation, double[] values, Elephant mother, Elephant father){
@@ -36,9 +34,6 @@ public class Elephant implements Comparable<Object>{
 
 		this.mother = mother;
 		this.father = father;
-
-		updateFitness(this.values);
-		updateNovelty(this.values, this.mother, this.father);
 	}
 
 	public Elephant getMother() {
@@ -54,18 +49,18 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	public double getFitness() {
-		if (fitness < 0) updateFitness();
+		if (fitness < 0) updateFitness(this.values);
 		return fitness;
 	}
 
 	public double getNovelty() {
-		if (novelty < 0) updateNovelty();
+		if (novelty < 0) updateNovelty(this.values, this.mother, this.father);
 		return novelty;
 	}
 
 	public double getScore(int p) {
 
-		return (getFitness() * p + (1 - p) *getNovelty());
+		return (getFitness() * p + (1 - p) * getNovelty());
 	}
 
 	public int compareTo(Object e) {

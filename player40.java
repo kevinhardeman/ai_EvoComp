@@ -66,7 +66,7 @@ public class player40 implements ContestSubmission
 				Elephant child = new Elephant(evaluation, random);
 
 				// Create child by mating parents and mutating result
-				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
+				children[j] = mutate(mate(parents[0], parents[1], 1), mutation_probability);
 			}
 
 			population = concatenate(population, children);
@@ -105,19 +105,44 @@ public class player40 implements ContestSubmission
 	}
 
 	public Elephant mate(Elephant mother, Elephant father) {
-		// TODO: Uniform Crossover (Probability per Allele to be either mother/father)
-		// TODO: N-Point Crossover
+		// Uniform Crossover (Probability per Allele to be either mother/father)
+
+		// Create new DNA
+		double[] dna = new double[DIMENSION];
+
+		for (int i=0; i<DIMENSION; i++) {
+			// Set DNA at current index to mothers/fathers randomly
+			dna[i] = (random.nextDouble() >= 0.5) ? mother.getValues()[i] : father.getValues()[i];
+		}
+
+		// A baby-elephant is born!;
+		return new Elephant(evaluation, dna, mother, father);
+	}
+
+	public Elephant mate(Elephant mother, Elephant father, int n) {
+		// N-Point Crossover
 
 		// Crossover using random crossover point
 
+		// Create new DNA
 		double[] dna = new double[DIMENSION];
-		int crossover_point = random.nextInt() % DIMENSION;
 
+		// Create Random Crossover points
+		int[] crossover_points = new int[n];
+		for (int i=0; i<n; i++) crossover_points[i] = random.nextInt(DIMENSION);
+		Arrays.sort(crossover_points);
+
+		int crossover_index = 0;
 		for (int i=0; i<DIMENSION; i++) {
-			dna[i] = (i > crossover_point) ? mother.getValues()[i] : father.getValues()[i];
+
+			// Check wether current index is bigger or equal to the current crossover index -> increment crossover index
+			if (crossover_index < crossover_points.length && i >= crossover_points[crossover_index]) crossover_index++;
+
+			// Set DNA at current index to mothers/fathers based on crossover index
+			dna[i] = (crossover_index % 2 == 0) ? mother.getValues()[i] : father.getValues()[i];
 		}
 
-		//A baby-elephant is born!;
+		// A baby-elephant is born!;
 		return new Elephant(evaluation, dna, mother, father);
 	}
 
