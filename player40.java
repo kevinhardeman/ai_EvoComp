@@ -259,4 +259,26 @@ public class player40 implements ContestSubmission
         Elephant averageDist = new Elephant(evaluation, values, null,null); 
         return averageDist;
     }
-}
+
+
+    public Elephant[] nearestNeighbours(Elephant main, Elephant[] elephants, Elephant[] averageList, int k){
+    	Elephant[] neighbours = new Elephant[k];
+    	Elephant[] total = concatenate(elephants, averageList);
+
+    	for(int a = 0; a < total.length; a++){
+    		double z = main.getDistance(total[a]);
+    		for(int b = 0; b < k; b++){
+    			if (z < neighbours[b].getDistance(total[a])){
+    				for(int c = (k - 1); c == 0 + b; c--){
+    					neighbours[c] = neighbours[c+1];
+    				}
+    				total[a] = neighbours[b];
+
+    				}
+    			}
+    		}
+    	return neighbours;
+    	}
+    }
+
+

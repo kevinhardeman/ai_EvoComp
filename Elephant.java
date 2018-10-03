@@ -1,5 +1,6 @@
 import org.vu.contest.ContestEvaluation;
 
+
 import java.io.File;
 import java.util.Comparator;
 import java.util.Random;
@@ -57,8 +58,17 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	public double getNovelty(Elephant average) {
-		updateNovelty(this.values, this.mother, this.father, average);
+		updateNovelty(this.mother, this.father, average);
 		return novelty;
+	}
+
+	public double getDistance(Elephant other) {
+		double distance = 0.0;
+		double[] otherValues = other.getValues();
+		for(int i = 0; i< values.length -1; i++){
+			distance = Math.abs(values[i]) + Math.abs(otherValues[i]);
+		}
+		return distance;
 	}
 
 	public double getScore(double p, Elephant average) {
@@ -76,14 +86,10 @@ public class Elephant implements Comparable<Object>{
 		}
 	}
 
-	private void updateNovelty(double[] values, Elephant mother, Elephant father, Elephant average) {
+	private void updateNovelty(Elephant mother, Elephant father, Elephant average) {
        //Takes the average Elephant to determine it's distance from it. This is then in turn used to determine the "novelty"
        //TODO: IMPLEMENT LIST OF PREVIOUS NOVEL BEHAVIOUR to determine current novelty.
-        double novelty = 0.0;
-        double[] averageValues = average.getValues();
-        for(int i = 0; i < values.length - 1; i++){
-            novelty = values[i] - averageValues[i];
-        }
+        novelty = getDistance(average);
         novelty = novelty / (MAX_RANGE * 2);
         
         this.novelty = novelty; 
