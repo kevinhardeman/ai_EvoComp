@@ -18,6 +18,7 @@ public class player40 implements ContestSubmission
 	ContestEvaluation evaluation;
 
 	private int evaluations_limit;
+    Elephant Average = null;
 
 	public player40()
 	{
@@ -51,17 +52,22 @@ public class player40 implements ContestSubmission
 		int population_size = 100;
 		int tournament_size = 5;
 		double mutation_probability = 0.1;
+        double linearblend = 0.5; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
 
 		Elephant[] population = initiate(population_size);
+        //List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
+        Elephant[] AveragesList = new Elephant[0];
+        Average = calcAverageElephant(population);
+  		for (int i=0; i<evaluations_limit; i++){
 
-		for (int i=0; i<evaluations_limit; i++){
+
 
 			Elephant[] children = new Elephant[population_size];
 
 			for (int j=0; j<population_size; j++) {
 
 				// Select Parents from population
-				Elephant[] parents = select(population, 2, tournament_size);
+				Elephant[] parents = select(population, 2, tournament_size, Average, linearblend);
 
 				Elephant child = new Elephant(evaluation, random);
 
@@ -70,11 +76,17 @@ public class player40 implements ContestSubmission
 			}
 
 			population = concatenate(population, children);
-			population = select(population, population_size, tournament_size);
+            Average = calcAverageElephant(population);
+            AveragesList = append(AveragesList, Average);
+			population = select(population, population_size, tournament_size, Average, linearblend);
 
 			Arrays.sort(population);
-
+			//System.out.println(popluation[0].getNovelty());
 			System.out.println(population[0].getFitness());
+            //TODO: Slowly moves the linearblend function to 1. 
+            if(linearblend < 1){
+                linearblend = linearblend + 0.05;
+            }
 		}
 	}
 
@@ -130,7 +142,7 @@ public class player40 implements ContestSubmission
 	}
 
 	// Implementation for tournament selection (Kevin)
-	public Elephant[] select(Elephant[] population, int output_size, int tournament_size) {
+	public Elephant[] select(Elephant[] population, int output_size, int tournament_size, Elephant Average, double linearblend) {
 		Elephant[] output = new Elephant[output_size];
 		// Define number of tournaments
 		for (int i = 0; i < output_size; i++){
@@ -141,10 +153,10 @@ public class player40 implements ContestSubmission
 			// Play tournament
 			for (int j = 0; j < tournament_size; j++){
 				Elephant currentElephant = population[random.nextInt(population.length)];
-
-				if (bestElephant == null || currentElephant.getFitness() > bestElephant.getFitness()){
+				if (bestElephant == null || currentElephant.getScore(linearblend, Average) > bestElephant.getScore(linearblend, Average)){
 					bestElephant = currentElephant;
 				}
+             
 			}
 
 			output[i] = bestElephant;
@@ -174,4 +186,33 @@ public class player40 implements ContestSubmission
 
     	return c;
 	}
+
+    public Elephant[] append(Elephant[] a, Elephant b) {
+        Elephant[] c = new Elephant[a.length + 1];
+        int index = 0;
+        for (int i=0; i<a.length; i++) {
+			c[index] = a[i];
+			index++;
+		}
+        c[index]  = b;
+        return c;
+    }
+    public Elephant calcAverageElephant(Elephant[] Elephants){
+        //Creates a list of values which are used to define the average elephant.
+        double[] values = new double[DIMENSION];
+        for(int z = 0; z < Elephants.length; z++){
+            double[] EleValue = Elephants[z].getValues();
+            for(int i = 0; i < EleValue.length; i++){
+                values[i] = values[i] + EleValue[i];
+            }
+        }
+        
+        for(int k=0; k<DIMENSION; k++){
+            values[k] = values[k] / Elephants.length;
+            }
+        Elephant AverageDist = new Elephant(evaluation, values, null,null); 
+        return AverageDist;
+        
+    }
+
 }
