@@ -53,9 +53,10 @@ public class player40 implements ContestSubmission
 		int tournament_size = 5;
 
 		double mutation_probability = 0.2;
-		double max_sigma = 5.0 / 3.0;
+		double max_sigma = 10;
         
         double linearblend = 0.5; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
+        double linearblend_delta = 0.05;
 
 		Elephant[] population = initiate(population_size, max_sigma);
         //List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
@@ -82,8 +83,10 @@ public class player40 implements ContestSubmission
 			Arrays.sort(population);
             //TODO: Slowly moves the linearblend function to 1. 
             if(linearblend < 1){
-                linearblend = linearblend + 0.05;
+                linearblend += linearblend_delta;
             }
+
+
 
             System.out.print(i);
             System.out.print(":\t");
