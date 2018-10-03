@@ -1,4 +1,3 @@
-
 COMPILE = javac -cp contest.jar player40.java Elephant.java
 SUBMISSION = jar cmf MainClass.txt submission.jar player40.class Elephant.class
 RUN = java -jar testrun.jar -submission=player40 -seed=1

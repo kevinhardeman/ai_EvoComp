@@ -3,11 +3,12 @@ import org.vu.contest.ContestEvaluation;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.Arrays;
 
 
 public class Elephant implements Comparable<Object>{
 
-	static int DIMENSION = 10;
+	static int DIMENSION = 11;
 	static double MAX_RANGE = 5.0;
 
 	private Elephant mother = null;
@@ -19,13 +20,15 @@ public class Elephant implements Comparable<Object>{
 
 	private ContestEvaluation evaluation;
 
-	public Elephant(ContestEvaluation evaluation, Random random) {
+	public Elephant(ContestEvaluation evaluation, Random random, double max_sigma) {
 		this.evaluation = evaluation;
 
 		this.values = new double[DIMENSION];
 		for (int j=0; j<DIMENSION; j++) {
 			this.values[j] = randomDouble(random, -MAX_RANGE, MAX_RANGE);
 		}
+
+		this.values[DIMENSION-1] = randomDouble(random, 0, max_sigma);
 	}
 
 	public Elephant(ContestEvaluation evaluation, double[] values, Elephant mother, Elephant father){
@@ -67,7 +70,7 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	private void updateFitness(double[] values) {
-		try { this.fitness = (double) this.evaluation.evaluate(values); }
+		try { this.fitness = (double) this.evaluation.evaluate(Arrays.copyOf(values, DIMENSION - 1)); }
 		catch(NullPointerException e) {
 			throw new RuntimeException("Exceeded computational budget!");
 		}
