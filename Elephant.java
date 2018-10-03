@@ -57,11 +57,12 @@ public class Elephant implements Comparable<Object>{
 		return fitness;
 	}
 
-	public double getNovelty(Elephant average) {
-		updateNovelty(this.mother, this.father, average);
+	public double getNovelty(Elephant[] total, int k) {
+		if(novelty < 0) updateNovelty(total, k);
 		return novelty;
 	}
 
+	//Calculates euclidean distance between this elephant and another.
 	public double getDistance(Elephant other) {
 		double distance = 0.0;
 		double[] otherValues = other.getValues();
@@ -71,8 +72,8 @@ public class Elephant implements Comparable<Object>{
 		return distance;
 	}
 
-	public double getScore(double p, Elephant average) {
-		return ((getFitness()) * p + (1.0 - p) * (getNovelty(average)));
+	public double getScore(double p, Elephant[] total, int k) {
+		return ((getFitness()) * p + (1.0 - p) * (getNovelty(total, k)));
 	}
 
 	public int compareTo(Object e) {
@@ -86,14 +87,34 @@ public class Elephant implements Comparable<Object>{
 		}
 	}
 
-	private void updateNovelty(Elephant mother, Elephant father, Elephant average) {
-       //Takes the average Elephant to determine it's distance from it. This is then in turn used to determine the "novelty"
-       //TODO: IMPLEMENT LIST OF PREVIOUS NOVEL BEHAVIOUR to determine current novelty.
-        novelty = getDistance(average);
-        novelty = novelty / (MAX_RANGE * 2);
-        
-        this.novelty = novelty; 
-	}
+
+	//Finds the k nearest neighbours and determines the total distance of those three. 
+	//This is then divide by k to determine the average distance towards neighbours and then normalised in such a way that it is representable like fitness.
+	//the total list is a list of the current population + a list of previously novel behaviour. 
+	private void updateNovelty(Elephant[] total, int k){
+    	double distance = 0.0;
+    	double z = 0.0;
+    	Elephant[] neighbours = new Elephant[k];
+
+    	for(int a = 0; a < total.length -1; a++){
+    		z = this.getDistance(total[a]);
+    		for(int b = 0; b < k; b++){
+    			if (neighbours[b] == null || z < this.getDistance(neighbours[b])){
+    				for(int c = k; c == b; c--){
+    					neighbours[c - 1] = neighbours[c];
+    				}
+    				neighbours[b] = total[a];
+
+    				}
+    			}
+    		}
+    	for(int u = 0; u < k; u++){
+    		distance = distance + this.getDistance(neighbours[u]);
+    	}
+    	distance = (distance / k) / (MAX_RANGE * 2);
+    
+    	this.novelty = distance;
+    	}
 
 	private static double randomDouble(Random random, double min, double max){
 		return (random.nextDouble() * (max - min)) + min;
