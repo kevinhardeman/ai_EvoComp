@@ -18,7 +18,7 @@ public class player40 implements ContestSubmission
 	ContestEvaluation evaluation;
 
 	private int evaluations_limit;
-    Elephant Average = null;
+    Elephant average = null;
 
 	public player40()
 	{
@@ -56,18 +56,16 @@ public class player40 implements ContestSubmission
 
 		Elephant[] population = initiate(population_size);
         //List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
-        Elephant[] AveragesList = new Elephant[0];
-        Average = calcAverageElephant(population);
+        Elephant[] averagesList = new Elephant[0];
+        average = calcAverageElephant(population);
   		for (int i=0; i<evaluations_limit; i++){
-
-
 
 			Elephant[] children = new Elephant[population_size];
 
 			for (int j=0; j<population_size; j++) {
 
 				// Select Parents from population
-				Elephant[] parents = select(population, 2, tournament_size, Average, linearblend);
+				Elephant[] parents = select(population, 2, tournament_size, average, linearblend);
 
 				Elephant child = new Elephant(evaluation, random);
 
@@ -76,9 +74,9 @@ public class player40 implements ContestSubmission
 			}
 
 			population = concatenate(population, children);
-            Average = calcAverageElephant(population);
-            AveragesList = append(AveragesList, Average);
-			population = select(population, population_size, tournament_size, Average, linearblend);
+            average = calcAverageElephant(population);
+            averagesList = append(averagesList, average);
+			population = select(population, population_size, tournament_size, average, linearblend);
 
 			Arrays.sort(population);
 			//System.out.println(popluation[0].getNovelty());
@@ -167,7 +165,7 @@ public class player40 implements ContestSubmission
 	}
 
 	// Implementation for tournament selection (Kevin)
-	public Elephant[] select(Elephant[] population, int output_size, int tournament_size, Elephant Average, double linearblend) {
+	public Elephant[] select(Elephant[] population, int output_size, int tournament_size, Elephant average, double linearblend) {
 		Elephant[] output = new Elephant[output_size];
 		// Define number of tournaments
 		for (int i = 0; i < output_size; i++){
@@ -178,7 +176,7 @@ public class player40 implements ContestSubmission
 			// Play tournament
 			for (int j = 0; j < tournament_size; j++){
 				Elephant currentElephant = population[random.nextInt(population.length)];
-				if (bestElephant == null || currentElephant.getScore(linearblend, Average) > bestElephant.getScore(linearblend, Average)){
+				if (bestElephant == null || currentElephant.getScore(linearblend, average) > bestElephant.getScore(linearblend, average)){
 					bestElephant = currentElephant;
 				}
              
@@ -222,21 +220,22 @@ public class player40 implements ContestSubmission
         c[index]  = b;
         return c;
     }
-    public Elephant calcAverageElephant(Elephant[] Elephants){
+
+    public Elephant calcAverageElephant(Elephant[] elephants){
         //Creates a list of values which are used to define the average elephant.
         double[] values = new double[DIMENSION];
-        for(int z = 0; z < Elephants.length; z++){
-            double[] EleValue = Elephants[z].getValues();
-            for(int i = 0; i < EleValue.length; i++){
-                values[i] = values[i] + EleValue[i];
+        for(int z = 0; z < elephants.length; z++){
+            double[] eleValue = elephants[z].getValues();
+            for(int i = 0; i < eleValue.length; i++){
+                values[i] = values[i] + eleValue[i];
             }
         }
         
         for(int k=0; k<DIMENSION; k++){
-            values[k] = values[k] / Elephants.length;
+            values[k] = values[k] / elephants.length;
             }
-        Elephant AverageDist = new Elephant(evaluation, values, null,null); 
-        return AverageDist;
+        Elephant averageDist = new Elephant(evaluation, values, null,null); 
+        return averageDist;
         
     }
 
