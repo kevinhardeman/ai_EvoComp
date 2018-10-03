@@ -87,14 +87,26 @@ public class player40 implements ContestSubmission
             }
 
 
+            double max_novelty = 0.0;
+            for (Elephant e : population) {
+            	double abs_novelty = Math.abs(e.getNovelty(average));
+            	if (abs_novelty > max_novelty) max_novelty = abs_novelty;
+            }
+
+            double mean_sigma = 0.0;
+            for (Elephant e : population) {
+            	mean_sigma += e.getValues()[DIMENSION-1];
+            }
+            mean_sigma /= population.length;
+
 
             System.out.print(i);
             System.out.print(":\t");
             System.out.print(population[0].getFitness());
-            System.out.print("\t");
-            System.out.print(population[0].getNovelty(average));
             System.out.print("\t\t");
-            System.out.print(population[0].getValues()[DIMENSION-1]);
+            System.out.print(max_novelty);
+            System.out.print("\t\t");
+            System.out.print(mean_sigma);
             System.out.println();
 		}
 	}
@@ -244,7 +256,5 @@ public class player40 implements ContestSubmission
             }
         Elephant averageDist = new Elephant(evaluation, values, null,null); 
         return averageDist;
-        
     }
-
 }
