@@ -50,7 +50,7 @@ public class player40 implements ContestSubmission
 		// Algorithm Parameters
 		int population_size = 100;
 		int tournament_size = 5;
-		double mutation_probability = 0.02;
+		double mutation_probability = 0.1;
 
 		Elephant[] population = initiate(population_size);
 
@@ -92,12 +92,20 @@ public class player40 implements ContestSubmission
 
 	public Elephant mutate(Elephant elephant, double probability) {
 		// Fixed chance 'mutation_probability' per allele to mutate to random value within MAX_RANGE
-		
+
 		double[] values = elephant.getValues();
 
 		for (int i=0; i<DIMENSION; i++) {
 			if (random.nextDouble() < probability) {
-				values[i] = randomDouble(-MAX_RANGE, MAX_RANGE);
+				// TODO: Gaussian should be Elephant-specific attribute
+				double mutated_value = values[i] + random.nextGaussian();
+
+				// New values should still be in function ranges
+				if(mutated_value < -MAX_RANGE || mutated_value > MAX_RANGE){
+					//System.out.println("Mutation failed due to invalid values"); // sanity check print - we don't want infinite loops
+					return mutate(elephant, probability); // try again
+				}
+				values[i] = mutated_value;
 			}
 		}
 
@@ -151,7 +159,7 @@ public class player40 implements ContestSubmission
 		Elephant[] output = new Elephant[output_size];
 		// Define number of tournaments
 		for (int i = 0; i < output_size; i++){
-			
+
 			Elephant[] tournament = new Elephant[tournament_size];
 
 			Elephant bestElephant = null;
