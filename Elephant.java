@@ -59,7 +59,7 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	public double getScore(double p, Elephant average) {
-		return (getFitness() * p + (1.0 - p) * getNovelty(average));
+		return ((getFitness()) * p + (1.0 - p) * (getNovelty(average)));
 	}
 
 	public int compareTo(Object e) {
