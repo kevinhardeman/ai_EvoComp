@@ -49,14 +49,14 @@ public class player40 implements ContestSubmission
 
 	public void run() {
 		// Algorithm Parameters
-		int population_size = 100;
+		int population_size = 200;
 		int tournament_size = 5;
 
-		double mutation_probability = 0.2;
-		double max_sigma = 5.0/3.0;
+		double mutation_probability = 0.15;
+		double max_sigma = 2;
         
         double linearblend = 0.5; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
-        double linearblend_delta = 0.05;
+        double linearblend_delta = 0.1;
 
 		Elephant[] population = initiate(population_size, max_sigma);
 
@@ -74,7 +74,7 @@ public class player40 implements ContestSubmission
 				Elephant[] parents = select(population, 2, tournament_size, average, linearblend);
 
 				// Create child by mating parents and mutating result
-				children[j] = mutate(mate(parents[0], parents[1], 3), mutation_probability);
+				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
 			}
 
 			population = concatenate(population, children);
@@ -89,11 +89,11 @@ public class player40 implements ContestSubmission
             }
 
             // Statistics Printout
-            double max_novelty = 0.0;
+            double mean_novelty = 0.0;
             for (Elephant e : population) {
-            	double abs_novelty = Math.abs(e.getNovelty(average));
-            	if (abs_novelty > max_novelty) max_novelty = abs_novelty;
+            	mean_novelty += Math.abs(e.getNovelty(average));
             }
+            mean_novelty /= population.length;
 
             double mean_sigma = 0.0;
             for (Elephant e : population) {
@@ -106,7 +106,7 @@ public class player40 implements ContestSubmission
             System.out.print(":\t");
             System.out.print(population[0].getFitness());
             System.out.print("\t\t");
-            System.out.print(max_novelty);
+            System.out.print(mean_novelty);
             System.out.print("\t\t");
             System.out.print(mean_sigma);
             System.out.println();
