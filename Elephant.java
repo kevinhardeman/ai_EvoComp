@@ -53,13 +53,13 @@ public class Elephant implements Comparable<Object>{
 		return fitness;
 	}
 
-	public double getNovelty(Elephant Average) {
-		updateNovelty(this.values, this.mother, this.father, Average, this.MAX_RANGE);
+	public double getNovelty(Elephant average) {
+		updateNovelty(this.values, this.mother, this.father, average);
 		return novelty;
 	}
 
-	public double getScore(double p, Elephant Average) {
-		return (getFitness() * p + (1.0 - p) * getNovelty(Average));
+	public double getScore(double p, Elephant average) {
+		return (getFitness() * p + (1.0 - p) * getNovelty(average));
 	}
 
 	public int compareTo(Object e) {
@@ -73,19 +73,18 @@ public class Elephant implements Comparable<Object>{
 		}
 	}
 
-	private void updateNovelty(double[] values, Elephant mother, Elephant father, Elephant Average, double Max_range) {
+	private void updateNovelty(double[] values, Elephant mother, Elephant father, Elephant average) {
        //Takes the average Elephant to determine it's distance from it. This is then in turn used to determine the "novelty"
        //TODO: IMPLEMENT LIST OF PREVIOUS NOVEL BEHAVIOUR to determine current novelty.
         double novelty = 0.0;
-        double[] AverageValues = Average.getValues();
+        double[] averageValues = average.getValues();
         for(int i = 0; i < values.length; i++){
-            novelty = values[i] - AverageValues[i];
+            novelty = values[i] - averageValues[i];
         }
-        novelty = novelty / (Max_range * 2);
+        novelty = novelty / (MAX_RANGE * 2);
         
         this.novelty = novelty; 
 	}
-
 
 	private static double randomDouble(Random random, double min, double max){
 		return (random.nextDouble() * (max - min)) + min;

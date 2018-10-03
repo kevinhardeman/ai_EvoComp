@@ -142,8 +142,6 @@ public class player40 implements ContestSubmission
 	public Elephant mate(Elephant mother, Elephant father, int n) {
 		// N-Point Crossover
 
-		// Crossover using random crossover point
-
 		// Create new DNA
 		double[] dna = new double[DIMENSION];
 
@@ -222,6 +220,7 @@ public class player40 implements ContestSubmission
         c[index]  = b;
         return c;
     }
+
     public Elephant calcAverageElephant(Elephant[] Elephants){
         //Creates a list of values which are used to define the average elephant.
         double[] values = new double[DIMENSION];
