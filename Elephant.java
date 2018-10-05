@@ -58,7 +58,7 @@ public class Elephant implements Comparable<Object>{
 	}
 
 	public double getNovelty(Elephant[] total, int k) {
-		if(novelty < 0) updateNovelty(total, k);
+		updateNovelty(total, k);
 		return novelty;
 	}
 
@@ -90,7 +90,7 @@ public class Elephant implements Comparable<Object>{
 
 	//Finds the k nearest neighbours and determines the total distance of those three. 
 	//This is then divide by k to determine the average distance towards neighbours and then normalised in such a way that it is representable like fitness.
-	//the total list is a list of the current population + a list of previously novel behaviour. 
+	//the total list is a list of the current population + a list of previously novel behaviour.
 	private void updateNovelty(Elephant[] total, int k){
     	double distance = 0.0;
     	double z = 0.0;
