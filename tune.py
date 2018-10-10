@@ -23,7 +23,7 @@ space = [
 	Real(0.1, 0.35, name="mutation_probability"),
 	Real(1, 2, name="max_sigma"),
 	Real(0, 10, name="novelty_threshold"),
-	Real(0, 1, name="linearblend"),
+	Real(0, 0.9, name="linearblend"),
 	Real(0, 0.1, name="linearblend_delta"),
 	Integer(2, 6, name="nearestNeighbours")
 ]
@@ -33,8 +33,9 @@ def evaluate(**parameters: dict):
 	score = 0.0
 	for evals in range(N):
 		score += -float(re.findall(REGEX, subprocess.check_output(["make", str(TARGET), "FLAGS={}".format(" ".join("-D{}={}".format(p,v) for p,v in parameters.items()))], stderr=subprocess.PIPE).decode())[0])
+	score =/ N
 	print(parameters, score)
-	return score / N
+	return score
 
 result = gp_minimize(evaluate, space, n_calls=100, random_state=0, verbose=True)
 
