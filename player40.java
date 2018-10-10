@@ -59,47 +59,58 @@ public class player40 implements ContestSubmission
 
 		double mutation_probability = 0.15;
 		double max_sigma = 2;
-        
-        double linearblend = 0.5; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
-        double linearblend_delta = 0.1;
+		
+		double novelty_treshold = 5; //treshold        
+        double linearblend = 0.8; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
+        double linearblend_delta = 0.05;
+        int nearestNeighbours = 3;
 
 		Elephant[] population = initiate(population_size, max_sigma);
 
-        // List to keep track of all novel behaviour. This has to be implemented later to reward novelty.
-        Elephant[] averagesList = new Elephant[0];
-        average = calcAverageElephant(population);
-
+		Elephant[] totaList = new Elephant[0]; //totaList 
+        Elephant[] noveList = initiate(1, max_sigma); //list to keep track of all previously novel elephants. the first initiate is just te avoid nullpointerexceptions (could be implemented better)
   		for (int i=0; i<evaluations_limit; i++){
-
+  			int noveListElephant = 0;
 			Elephant[] children = new Elephant[population_size];
 
 			for (int j=0; j<population_size; j++) {
 
+
 				// Select Parents from population
-				Elephant[] parents = select(population, 2, tournament_size, average, linearblend);
+				Elephant[] parents = select(population, 2, tournament_size, noveList, linearblend, nearestNeighbours);
+
 
 				// Create child by mating parents and mutating result
 				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
+
+
+			}
+			totaList = concatenate(population, noveList);
+			for(int e = 0; e < children.length; e++){
+				if(children[e].getNovelty(totaList, nearestNeighbours) > novelty_treshold){
+					append(noveList, children[e]);
+					append(totaList, children[e]);
+				}
 			}
 
 			population = concatenate(population, children);
-            average = calcAverageElephant(population);
-            averagesList = append(averagesList, average);
-			population = select(population, population_size, tournament_size, average, linearblend);
-
+			population = select(population, population_size, tournament_size, noveList, linearblend, nearestNeighbours);
 			Arrays.sort(population);
             //TODO: Slowly moves the linearblend function to 1. 
             if(linearblend < 1){
                 linearblend += linearblend_delta;
             }
 
+
+
             // Statistics Printout
+            /*
             double mean_novelty = 0.0;
             for (Elephant e : population) {
-            	mean_novelty += Math.abs(e.getNovelty(average));
+            	mean_novelty += Math.abs(e.getNovelty(population, nearestNeighbours));
             }
             mean_novelty /= population.length;
-
+			*/
             double mean_sigma = 0.0;
             for (Elephant e : population) {
             	mean_sigma += e.getValues()[DIMENSION-1];
@@ -111,7 +122,7 @@ public class player40 implements ContestSubmission
             System.out.print(":\t");
             System.out.print(population[0].getFitness());
             System.out.print("\t\t");
-            System.out.print(mean_novelty);
+            System.out.print(population[noveListElephant].getNovelty(totaList, nearestNeighbours));
             System.out.print("\t\t");
             System.out.print(mean_sigma);
             System.out.println();
@@ -191,7 +202,8 @@ public class player40 implements ContestSubmission
 	}
 
 	// Implementation for tournament selection (Kevin)
-	public Elephant[] select(Elephant[] population, int output_size, int tournament_size, Elephant average, double linearblend) {
+	public Elephant[] select(Elephant[] population, int output_size, int tournament_size, Elephant[] averagesList, double linearblend, int nearestNeighbours) {
+		Elephant[] total = concatenate(population, averagesList);
 		Elephant[] output = new Elephant[output_size];
 		// Define number of tournaments
 		for (int i = 0; i < output_size; i++){
@@ -202,7 +214,7 @@ public class player40 implements ContestSubmission
 			// Play tournament
 			for (int j = 0; j < tournament_size; j++){
 				Elephant currentElephant = population[random.nextInt(population.length)];
-				if (bestElephant == null || currentElephant.getScore(linearblend, average) > bestElephant.getScore(linearblend, average)){
+				if (bestElephant == null || currentElephant.getScore(linearblend, total, nearestNeighbours) > bestElephant.getScore(linearblend, total, nearestNeighbours)){
 					bestElephant = currentElephant;
 				}
              
@@ -248,20 +260,7 @@ public class player40 implements ContestSubmission
     }
 
 
-    public Elephant calcAverageElephant(Elephant[] elephants){
-        //Creates a list of values which are used to define the average elephant.
-        double[] values = new double[DIMENSION];
-        for(int z = 0; z < elephants.length; z++){
-            double[] eleValue = elephants[z].getValues();
-            for(int i = 0; i < eleValue.length; i++){
-                values[i] = values[i] + eleValue[i];
-            }
-        }
-        
-        for(int k=0; k<DIMENSION; k++){
-            values[k] = values[k] / elephants.length;
-            }
-        Elephant averageDist = new Elephant(evaluation, values, null,null); 
-        return averageDist;
-    }
 }
+
+
+
