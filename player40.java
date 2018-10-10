@@ -23,16 +23,18 @@ public class player40 implements ContestSubmission
     Elephant average = null;
 
 	// Algorithm Parameters
-	int population_size = 200;
-	int tournament_size = 5;
+	int population_size = 211;
+	int tournament_size = 2;
 
-	double mutation_probability = 0.15;
-	double max_sigma = 2;
+	int crossover_points = 5;
+
+	double mutation_probability = 0.35;
+	double max_sigma = 1.712238291064383;
 	
-	double novelty_treshold = 5; //treshold        
-    double linearblend = 0.8; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
-    double linearblend_delta = 0.05;
-    int nearestNeighbours = 3;
+	double novelty_treshold = 0.0; //treshold        
+    double linearblend = 1.0; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
+    double linearblend_delta = 0.1;
+    int nearestNeighbours = 5;
 
 	public player40()
 	{
@@ -42,7 +44,7 @@ public class player40 implements ContestSubmission
 	public void setSeed(long seed)
 	{
 		// Set seed of algortihms random process
-		random.setSeed(seed);
+		// random.setSeed(seed);
 	}
 
 	public void setEvaluation(ContestEvaluation evaluation)
@@ -58,6 +60,9 @@ public class player40 implements ContestSubmission
 
 		if (System.getProperty("tournament_size") != null)
 			tournament_size = Integer.parseInt(System.getProperty("tournament_size"));
+
+		if (System.getProperty("crossover_points") != null)
+			crossover_points = Integer.parseInt(System.getProperty("crossover_points"));
 
 		if (System.getProperty("mutation_probability") != null)
 			mutation_probability = Double.parseDouble(System.getProperty("mutation_probability"));
@@ -101,7 +106,7 @@ public class player40 implements ContestSubmission
 				Elephant[] parents = select(population, 2, tournament_size, noveList, linearblend, nearestNeighbours);
 
 				// Create child by mating parents and mutating result
-				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
+				children[j] = mutate(mate(parents[0], parents[1], crossover_points), mutation_probability);
 			}
 
 			totaList = concatenate(population, noveList);
@@ -115,7 +120,7 @@ public class player40 implements ContestSubmission
 			population = concatenate(population, children);
 			population = select(population, population_size, tournament_size, noveList, linearblend, nearestNeighbours);
 			Arrays.sort(population);
-			
+
             //TODO: Slowly moves the linearblend function to 1. 
             if(linearblend < 1){
                 linearblend += linearblend_delta;
