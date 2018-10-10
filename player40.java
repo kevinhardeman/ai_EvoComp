@@ -7,10 +7,12 @@ import java.util.Arrays;
 import java.lang.Object;
 import java.util.ArrayList;
 import java.util.*;
+import java.io.*;
 
 public class player40 implements ContestSubmission
 {
 
+	static boolean DEBUG = TRUE;
 	static int DIMENSION = 11;
 	static double MAX_RANGE = 5.0;
 
@@ -38,8 +40,10 @@ public class player40 implements ContestSubmission
 
 		// Get evaluation properties
 		Properties props = evaluation.getProperties();
+
 		// Get evaluation limit
 		evaluations_limit = Integer.parseInt(props.getProperty("Evaluations"));
+
 		// Property keys depend on specific evaluation
 		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
 		boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
@@ -48,6 +52,7 @@ public class player40 implements ContestSubmission
 	}
 
 	public void run() {
+
 		// Algorithm Parameters
 		int population_size = 200;
 		int tournament_size = 5;
