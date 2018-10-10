@@ -111,7 +111,7 @@ public class Elephant implements Comparable<Object>{
     	for(int u = 0; u < k; u++){
     		distance = distance + this.getDistance(neighbours[u]);
     	}
-    	distance = (distance / k) / (MAX_RANGE * 2);
+    	distance = (distance / k) / (DIMENSION -1);
     
     	this.novelty = distance;
     	}
