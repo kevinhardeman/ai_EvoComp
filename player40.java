@@ -12,7 +12,7 @@ import java.io.*;
 public class player40 implements ContestSubmission
 {
 
-	static boolean DEBUG = TRUE;
+	static boolean DEBUG = false;
 	static int DIMENSION = 11;
 	static double MAX_RANGE = 5.0;
 
@@ -21,6 +21,18 @@ public class player40 implements ContestSubmission
 
 	private int evaluations_limit;
     Elephant average = null;
+
+	// Algorithm Parameters
+	int population_size = 200;
+	int tournament_size = 5;
+
+	double mutation_probability = 0.15;
+	double max_sigma = 2;
+	
+	double novelty_treshold = 5; //treshold        
+    double linearblend = 0.8; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
+    double linearblend_delta = 0.05;
+    int nearestNeighbours = 3;
 
 	public player40()
 	{
@@ -41,6 +53,30 @@ public class player40 implements ContestSubmission
 		// Get evaluation properties
 		Properties props = evaluation.getProperties();
 
+		if (System.getProperty("population_size") != null)
+			population_size = Integer.parseInt(System.getProperty("population_size"));
+
+		if (System.getProperty("tournament_size") != null)
+			tournament_size = Integer.parseInt(System.getProperty("tournament_size"));
+
+		if (System.getProperty("mutation_probability") != null)
+			mutation_probability = Double.parseDouble(System.getProperty("mutation_probability"));
+
+		if (System.getProperty("max_sigma") != null)
+			max_sigma = Double.parseDouble(System.getProperty("max_sigma"));
+		
+		if (System.getProperty("novelty_treshold") != null)
+			novelty_treshold = Double.parseDouble(System.getProperty("novelty_treshold"));
+
+		if (System.getProperty("linearblend") != null)
+			linearblend = Double.parseDouble(System.getProperty("linearblend"));
+
+		if (System.getProperty("linearblend_delta") != null)
+			linearblend_delta = Double.parseDouble(System.getProperty("linearblend_delta"));
+
+		if (System.getProperty("nearestNeighbours") != null)
+			nearestNeighbours = Integer.parseInt(System.getProperty("nearestNeighbours"));
+
 		// Get evaluation limit
 		evaluations_limit = Integer.parseInt(props.getProperty("Evaluations"));
 
@@ -52,19 +88,6 @@ public class player40 implements ContestSubmission
 	}
 
 	public void run() {
-
-		// Algorithm Parameters
-		int population_size = 200;
-		int tournament_size = 5;
-
-		double mutation_probability = 0.15;
-		double max_sigma = 2;
-		
-		double novelty_treshold = 5; //treshold        
-        double linearblend = 0.8; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
-        double linearblend_delta = 0.05;
-        int nearestNeighbours = 3;
-
 		Elephant[] population = initiate(population_size, max_sigma);
 
 		Elephant[] totaList = new Elephant[0]; //totaList 
@@ -74,17 +97,13 @@ public class player40 implements ContestSubmission
 			Elephant[] children = new Elephant[population_size];
 
 			for (int j=0; j<population_size; j++) {
-
-
 				// Select Parents from population
 				Elephant[] parents = select(population, 2, tournament_size, noveList, linearblend, nearestNeighbours);
 
-
 				// Create child by mating parents and mutating result
 				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
-
-
 			}
+
 			totaList = concatenate(population, noveList);
 			for(int e = 0; e < children.length; e++){
 				if(children[e].getNovelty(totaList, nearestNeighbours) > novelty_treshold){
@@ -96,36 +115,36 @@ public class player40 implements ContestSubmission
 			population = concatenate(population, children);
 			population = select(population, population_size, tournament_size, noveList, linearblend, nearestNeighbours);
 			Arrays.sort(population);
+			
             //TODO: Slowly moves the linearblend function to 1. 
             if(linearblend < 1){
                 linearblend += linearblend_delta;
             }
 
-
-
-            // Statistics Printout
-            /*
-            double mean_novelty = 0.0;
-            for (Elephant e : population) {
-            	mean_novelty += Math.abs(e.getNovelty(population, nearestNeighbours));
+            // Debug Printout
+            if (DEBUG) {
+	            /*
+	            double mean_novelty = 0.0;
+	            for (Elephant e : population) {
+	            	mean_novelty += Math.abs(e.getNovelty(population, nearestNeighbours));
+	            }
+	            mean_novelty /= population.length;
+				*/
+	            double mean_sigma = 0.0;
+	            for (Elephant e : population) {
+	            	mean_sigma += e.getValues()[DIMENSION-1];
+	            }
+	            mean_sigma /= population.length;
+            
+	            System.out.print(i);
+	            System.out.print(":\t");
+	            System.out.print(population[0].getFitness());
+	            System.out.print("\t\t");
+	            System.out.print(population[noveListElephant].getNovelty(totaList, nearestNeighbours));
+	            System.out.print("\t\t");
+	            System.out.print(mean_sigma);
+	            System.out.println();
             }
-            mean_novelty /= population.length;
-			*/
-            double mean_sigma = 0.0;
-            for (Elephant e : population) {
-            	mean_sigma += e.getValues()[DIMENSION-1];
-            }
-            mean_sigma /= population.length;
-
-
-            System.out.print(i);
-            System.out.print(":\t");
-            System.out.print(population[0].getFitness());
-            System.out.print("\t\t");
-            System.out.print(population[noveListElephant].getNovelty(totaList, nearestNeighbours));
-            System.out.print("\t\t");
-            System.out.print(mean_sigma);
-            System.out.println();
 		}
 	}
 
