@@ -54,8 +54,9 @@ public class player40 implements ContestSubmission
 
 		double mutation_probability = 0.15;
 		double max_sigma = 2;
-        
-        double linearblend = 0.2; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
+		
+		double novelty_treshold = 5; //treshold        
+        double linearblend = 0.8; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
         double linearblend_delta = 0.05;
         int nearestNeighbours = 3;
 
@@ -73,18 +74,22 @@ public class player40 implements ContestSubmission
 				// Select Parents from population
 				Elephant[] parents = select(population, 2, tournament_size, noveList, linearblend, nearestNeighbours);
 
+
 				// Create child by mating parents and mutating result
 				children[j] = mutate(mate(parents[0], parents[1]), mutation_probability);
+
+
+			}
+			totaList = concatenate(population, noveList);
+			for(int e = 0; e < children.length; e++){
+				if(children[e].getNovelty(totaList, nearestNeighbours) > novelty_treshold){
+					append(noveList, children[e]);
+					append(totaList, children[e]);
+				}
 			}
 
 			population = concatenate(population, children);
 			population = select(population, population_size, tournament_size, noveList, linearblend, nearestNeighbours);
-			totaList = concatenate(population, noveList);
-			for (int e = 0; e < population.length; e++) {
-            	if (population[e].getNovelty(totaList, nearestNeighbours) > population[noveListElephant].getNovelty(totaList, nearestNeighbours));
-        			noveListElephant = e;
-            }
-            noveList = append(noveList, population[noveListElephant]); //adds the novel elephant to the list of novel elephants
 			Arrays.sort(population);
             //TODO: Slowly moves the linearblend function to 1. 
             if(linearblend < 1){
@@ -247,25 +252,6 @@ public class player40 implements ContestSubmission
 		}
         c[index]  = b;
         return c;
-    }
-
-    //Gemiddelde olifant van populatie
-    //Not used anymore
-    public Elephant calcAverageElephant(Elephant[] elephants){
-        //Creates a list of values which are used to define the average elephant.
-        double[] values = new double[DIMENSION];
-        for( Elephant e: elephants){
-            double[] eleValue = e.getValues();
-            for(int i = 0; i < eleValue.length; i++){
-                values[i] = values[i] + eleValue[i];
-            }
-        }
-        
-        for(int k=0; k<DIMENSION; k++){
-            values[k] = values[k] / elephants.length;
-            }
-        Elephant averageDist = new Elephant(evaluation, values, null,null); 
-        return averageDist;
     }
 
 
