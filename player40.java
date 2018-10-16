@@ -13,6 +13,7 @@ public class player40 implements ContestSubmission
 {
 
 	static boolean DEBUG = false;
+	static boolean GET_TEST_RESULTS = true;
 	static int DIMENSION = 11;
 	static double MAX_RANGE = 5.0;
 
@@ -30,8 +31,8 @@ public class player40 implements ContestSubmission
 
 	double mutation_probability = 0.35;
 	double max_sigma = 1.712238291064383;
-	
-	double novelty_treshold = 0.0; //treshold        
+
+	double novelty_treshold = 0.0; //treshold
     double linearblend = 1.0; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
     double linearblend_delta = 0.1;
     int nearestNeighbours = 5;
@@ -69,7 +70,7 @@ public class player40 implements ContestSubmission
 
 		if (System.getProperty("max_sigma") != null)
 			max_sigma = Double.parseDouble(System.getProperty("max_sigma"));
-		
+
 		if (System.getProperty("novelty_treshold") != null)
 			novelty_treshold = Double.parseDouble(System.getProperty("novelty_treshold"));
 
@@ -95,7 +96,7 @@ public class player40 implements ContestSubmission
 	public void run() {
 		Elephant[] population = initiate(population_size, max_sigma);
 
-		Elephant[] totaList = new Elephant[0]; //totaList 
+		Elephant[] totaList = new Elephant[0]; //totaList
         Elephant[] noveList = initiate(1, max_sigma); //list to keep track of all previously novel elephants. the first initiate is just te avoid nullpointerexceptions (could be implemented better)
   		for (int i=0; i<evaluations_limit; i++){
   			int noveListElephant = 0;
@@ -121,7 +122,7 @@ public class player40 implements ContestSubmission
 			population = select(population, population_size, tournament_size, noveList, linearblend, nearestNeighbours);
 			Arrays.sort(population);
 
-            //TODO: Slowly moves the linearblend function to 1. 
+            //TODO: Slowly moves the linearblend function to 1.
             if(linearblend < 1){
                 linearblend += linearblend_delta;
             }
@@ -140,7 +141,7 @@ public class player40 implements ContestSubmission
 	            	mean_sigma += e.getValues()[DIMENSION-1];
 	            }
 	            mean_sigma /= population.length;
-            
+
 	            System.out.print(i);
 	            System.out.print(":\t");
 	            System.out.print(population[0].getFitness());
@@ -150,6 +151,11 @@ public class player40 implements ContestSubmission
 	            System.out.print(mean_sigma);
 	            System.out.println();
             }
+						if (GET_TEST_RESULTS){
+							for (Elephant e : population){
+									System.out.println(e.getFitness());
+							}
+						}
 		}
 	}
 
@@ -241,7 +247,7 @@ public class player40 implements ContestSubmission
 				if (bestElephant == null || currentElephant.getScore(linearblend, total, nearestNeighbours) > bestElephant.getScore(linearblend, total, nearestNeighbours)){
 					bestElephant = currentElephant;
 				}
-             
+
 			}
 
 			output[i] = bestElephant;
@@ -285,6 +291,3 @@ public class player40 implements ContestSubmission
 
 
 }
-
-
-
