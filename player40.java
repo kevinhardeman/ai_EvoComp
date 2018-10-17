@@ -11,10 +11,6 @@ import java.io.*;
 
 public class player40 implements ContestSubmission
 {
-
-	// Print Debug Information
-	static boolean DEBUG = false;
-
 	// Print Fitness values for every Population Iteration
 	static boolean GET_TEST_RESULTS = true;
 
@@ -126,13 +122,16 @@ public class player40 implements ContestSubmission
 	}
 
 	public void run() {
+
+		// Run Random Baseline
+		//  1. Get random point in 10 Dimensional Space
+		//  2. Evaluate Point
+		//  3. Profit! (Or not, it is really bad)
 		if (COMPLETELY_RANDOM) {
-
 			double max_score = 0.0;
-
 			while (true) {
 				double[] totally_random_point = new double[DIMENSION-1];
-				for (int j=0; j<DIMENSION-1; j++)
+				for (int j=0; j<DIMENSION-1; j++) {
 					totally_random_point[j] = randomDouble(-MAX_RANGE, MAX_RANGE);
 					double score = (double) evaluation.evaluate(totally_random_point);
 
@@ -140,19 +139,28 @@ public class player40 implements ContestSubmission
 						max_score = score;
 						System.out.println(max_score);
 					}
+				}
 			}
 		}
+
+		// Run Actual Evolutionary Algorithm
 		else {
 
+			// Initialize Population with Random DNA & Random Mutation Sigma
 			Elephant[] population = initiate(population_size, max_sigma);
 
-			Elephant[] totaList = new Elephant[0]; //totaList
-	        Elephant[] noveList = initiate(1, max_sigma); //list to keep track of all previously novel elephants. the first initiate is just te avoid nullpointerexceptions (could be implemented better)
+			// list to keep track of all previously novel elephants. 
+			// The first initiate is just to avoid nullpointerexceptions...
+	        Elephant[] noveList = initiate(1, max_sigma); 
+	  		
 	  		for (int i=0; i<evaluations_limit; i++){
-	  			int noveListElephant = 0;
+
+	  			// Initialize Children
 				Elephant[] children = new Elephant[population_size];
 
+				// Create n=population_size Children
 				for (int j=0; j<population_size; j++) {
+
 					// Select Parents from population
 					Elephant[] parents = select(population, 2, tournament_size, noveList, linearblend, nearestNeighbours);
 
@@ -160,52 +168,28 @@ public class player40 implements ContestSubmission
 					children[j] = mutate(mate(parents[0], parents[1], crossover_points), mutation_probability);
 				}
 
-				totaList = concatenate(population, noveList);
-				for(int e = 0; e < children.length; e++){
-					if(children[e].getNovelty(totaList, nearestNeighbours) > novelty_treshold){
-						append(noveList, children[e]);
-						append(totaList, children[e]);
+				// Update noveList
+				Elephant[] totaList = concatenate(population, noveList);
+				for (Elephant child : children){
+					if(child.getNovelty(totaList, nearestNeighbours) > novelty_treshold) {
+						append(noveList, child);
+						append(totaList, child);
 					}
 				}
 
+				// Select new Population from old Population, Children and NoveList
 				population = concatenate(population, children);
 				population = select(population, population_size, tournament_size, noveList, linearblend, nearestNeighbours);
 				Arrays.sort(population);
 
-	            //TODO: Slowly moves the linearblend function to 1.
-	            if(linearblend < 1){
-	                linearblend += linearblend_delta;
-	            }
+	            // Slowly Move linearblend to 1
+	            if(linearblend < 1) linearblend += linearblend_delta;
 
-	            // Debug Printout
-	            if (DEBUG) {
-		            /*
-		            double mean_novelty = 0.0;
-		            for (Elephant e : population) {
-		            	mean_novelty += Math.abs(e.getNovelty(population, nearestNeighbours));
-		            }
-		            mean_novelty /= population.length;
-					*/
-		            double mean_sigma = 0.0;
-		            for (Elephant e : population) {
-		            	mean_sigma += e.getValues()[DIMENSION-1];
-		            }
-		            mean_sigma /= population.length;
-
-		            System.out.print(i);
-		            System.out.print(":\t");
-		            System.out.print(population[0].getFitness());
-		            System.out.print("\t\t");
-		            System.out.print(population[noveListElephant].getNovelty(totaList, nearestNeighbours));
-		            System.out.print("\t\t");
-		            System.out.print(mean_sigma);
-		            System.out.println();
-						}
-						if (GET_TEST_RESULTS){
-							// print fitness of best elephant
-							System.out.println(population[population.length-1].getFitness());
-							}
+				if (GET_TEST_RESULTS){
+					// Print fFtness of Best Elephant each iteration
+					System.out.println(population[population.length-1].getFitness());
 				}
+			}
 		}
 	}
 
