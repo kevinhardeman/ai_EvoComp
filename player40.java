@@ -16,7 +16,7 @@ public class player40 implements ContestSubmission
 	static boolean DEBUG = false;
 
 	// Print Fitness values for every Population Iteration
-	static boolean GET_TEST_RESULTS = true;
+	static boolean GET_TEST_RESULTS = false;
 
 	// Perform Completely Random Baseline
 	static boolean COMPLETELY_RANDOM = false;
@@ -52,7 +52,7 @@ public class player40 implements ContestSubmission
 	double max_sigma = 1.712238291064383;
 
 	// Muation Sigma Learning Rate
-	double learning_rate = 0.01;
+	double learning_rate = 0.3;
 
 	// Minimum Novelty for an Elephant to be added to Novelty List
 	double novelty_treshold = 0.0;
@@ -203,7 +203,7 @@ public class player40 implements ContestSubmission
 						}
 						if (GET_TEST_RESULTS){
 							// print fitness of best elephant
-							System.out.println(population[population.length-1].getFitness());
+							System.out.println(population[0].getFitness());
 							}
 				}
 		}
@@ -227,8 +227,7 @@ public class player40 implements ContestSubmission
 		double[] values = elephant.getValues();
 
 		// Mutate sigma
-		double mutated_sigma = values[DIMENSION-1] * exp(learning_rate * random.nextGaussian())
-
+		double mutated_sigma = values[DIMENSION-1] * Math.exp(learning_rate * random.nextGaussian());
 
 		for (int i=0; i<DIMENSION-1; i++) {
 			if (random.nextDouble() < probability) {
@@ -243,6 +242,7 @@ public class player40 implements ContestSubmission
 				values[i] = mutated_value;
 			}
 		}
+		values[DIMENSION-1] = mutated_sigma;
 
 		return new Elephant(evaluation, values, elephant.getMother(), elephant.getFather());
 	}
