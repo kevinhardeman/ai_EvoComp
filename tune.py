@@ -66,5 +66,5 @@ result = gp_minimize(evaluate, space, n_calls=100, random_state=0, verbose=True)
 # Provide Summary of best Score & Hyperparameters to User
 print("Best Score: {}".format(result.fun))
 print("Best Parameters: ")
-for i, param in enumerate(["population_size", "tournament_size", "crossover_points", "mutation_probability", "max_sigma", "novelty_threshold", "linearblend", "linearblend_delta", "nearestNeighbours"]):
+for i, param in enumerate(["population_size", "tournament_size", "crossover_points", "mutation_probability", "max_sigma", "learning_rate", "novelty_threshold", "linearblend", "linearblend_delta", "nearestNeighbours"]):
 	print("\t{:30s}: {}".format(param, result.x[i]))
