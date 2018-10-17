@@ -19,7 +19,7 @@ public class player40 implements ContestSubmission
 	static boolean GET_TEST_RESULTS = true;
 
 	// Perform Completely Random Baseline
-	static boolean COMPLETELY_RANDOM = true;
+	static boolean COMPLETELY_RANDOM = false;
 
 	// Function Dimensionality and Range (-MAX_RANGE, MAX_RANGE)
 	static int DIMENSION = 11;
