@@ -186,7 +186,7 @@ public class player40 implements ContestSubmission
 	            if(linearblend < 1) linearblend += linearblend_delta;
 
 				if (GET_TEST_RESULTS){
-					// Print fFtness of Best Elephant each iteration
+					// Print Fitness of Best Elephant each iteration
 					System.out.println(population[population.length-1].getFitness());
 				}
 			}
@@ -194,13 +194,14 @@ public class player40 implements ContestSubmission
 	}
 
 	public Elephant[] initiate(int population_size, double max_sigma) {
+
+		// Intialize Elephant Population at Random points within function range
 		Elephant[] parents = new Elephant[population_size];
-
-		for (int i = 0; i < population_size; i++) {
+		for (int i = 0; i < population_size; i++)
 			parents[i] = new Elephant(evaluation, random, max_sigma);
-		}
 
-		Arrays.sort(parents); // sort parents based on fitness
+		// Sort Elephants based on Fitness
+		Arrays.sort(parents);
 
 		return parents;
 	}
@@ -208,26 +209,27 @@ public class player40 implements ContestSubmission
 	public Elephant mutate(Elephant elephant, double probability) {
 		// Fixed chance 'mutation_probability' per allele to mutate to random value within MAX_RANGE
 
+		// Get DNA (+ Sigma) from Elephant
 		double[] values = elephant.getValues();
 
 		// Mutate sigma
 		double mutated_sigma = values[DIMENSION-1] * Math.exp(learning_rate * random.nextGaussian());
+		values[DIMENSION-1] = mutated_sigma;
 
+		// Mutate Alleles based on Sigma
 		for (int i=0; i<DIMENSION-1; i++) {
 			if (random.nextDouble() < probability) {
-				// TODO: Gaussian should be Elephant-specific attribute
 				double mutated_value;
 
-				do {
-					mutated_value = values[i] + mutated_sigma * random.nextGaussian();
-				}
+				// Mutate Value, but make sure it is in function range
+				do mutated_value = values[i] + mutated_sigma * random.nextGaussian();
 				while (mutated_value < -MAX_RANGE || mutated_value > MAX_RANGE);  // New values should still be in function ranges
 
 				values[i] = mutated_value;
 			}
 		}
-		values[DIMENSION-1] = mutated_sigma;
 
+		// Return Mutated Elephant
 		return new Elephant(evaluation, values, elephant.getMother(), elephant.getFather());
 	}
 
@@ -271,25 +273,23 @@ public class player40 implements ContestSubmission
 		return new Elephant(evaluation, dna, mother, father);
 	}
 
-	// Implementation for tournament selection (Kevin)
 	public Elephant[] select(Elephant[] population, int output_size, int tournament_size, Elephant[] averagesList, double linearblend, int nearestNeighbours) {
+		// Tournament Selection Implementation
+
 		Elephant[] total = concatenate(population, averagesList);
 		Elephant[] output = new Elephant[output_size];
-		// Define number of tournaments
+
+		// Run 'output_size' tournaments
 		for (int i = 0; i < output_size; i++){
-
-			Elephant[] tournament = new Elephant[tournament_size];
-
 			Elephant bestElephant = null;
-			// Play tournament
+
+			// Run Tournament
 			for (int j = 0; j < tournament_size; j++){
 				Elephant currentElephant = population[random.nextInt(population.length)];
 				if (bestElephant == null || currentElephant.getScore(linearblend, total, nearestNeighbours) > bestElephant.getScore(linearblend, total, nearestNeighbours)){
 					bestElephant = currentElephant;
 				}
-
 			}
-
 			output[i] = bestElephant;
 		}
 
@@ -297,10 +297,14 @@ public class player40 implements ContestSubmission
 	}
 
 	public double randomDouble(double min, double max){
+		// Get Random double x: min <= x <= max
+
 		return (random.nextDouble() * ((max - min))) + min;
 	}
 
 	public Elephant[] concatenate(Elephant[] a, Elephant[] b) {
+		// Concatenate two arrays
+
 		Elephant[] c = new Elephant[a.length + b.length];
 
 		int index = 0;
@@ -319,6 +323,8 @@ public class player40 implements ContestSubmission
 	}
 
     public Elephant[] append(Elephant[] a, Elephant b) {
+    	// Append Elephant to Elephant Array
+
         Elephant[] c = new Elephant[a.length + 1];
         int index = 0;
         for (int i=0; i<a.length; i++) {
