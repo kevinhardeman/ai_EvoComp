@@ -111,7 +111,7 @@ public class player40 implements ContestSubmission
 					if (score > max_score){
 						max_score = score;
 						System.out.println(max_score);
-					}					
+					}
 			}
 		}
 		else {
@@ -172,11 +172,12 @@ public class player40 implements ContestSubmission
 		            System.out.print("\t\t");
 		            System.out.print(mean_sigma);
 		            System.out.println();
-	            }
+						}
 						if (GET_TEST_RESULTS){
 							// print fitness of best elephant
 							System.out.println(population[population.length-1].getFitness());
 							}
+				}
 		}
 	}
 
