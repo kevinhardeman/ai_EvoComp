@@ -46,6 +46,7 @@ def evaluate(**parameters: dict):
 	Evalute Evolutionary Algorithm using 'parameters' as Hyperparameters
 	Since we're dealing with a Stochastic Algorithm, take the mean over several runs as score
 	"""
+
 	score = 0.0
 
 	for evals in range(N):
@@ -53,7 +54,7 @@ def evaluate(**parameters: dict):
 		# Call Evolutionary Algorithm with 'parameters' and parse Score from Output
 		score += -float(re.findall(REGEX, subprocess.check_output(["make", str(TARGET), "FLAGS={}".format(" ".join("-D{}={}".format(p,v) for p,v in parameters.items()))], stderr=subprocess.PIPE).decode())[0])
 	
-	score =/ N
+	score /= N
 
 	print(parameters, score)
 	return score
