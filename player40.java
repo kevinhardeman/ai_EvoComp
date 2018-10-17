@@ -12,54 +12,74 @@ import java.io.*;
 public class player40 implements ContestSubmission
 {
 
+	// Print Debug Information
 	static boolean DEBUG = false;
+
+	// Print Fitness values for every Population Iteration
 	static boolean GET_TEST_RESULTS = true;
 
-	// Completely Random Baseline
+	// Perform Completely Random Baseline
 	static boolean COMPLETELY_RANDOM = false;
 
+	// Function Dimensionality and Range (-MAX_RANGE, MAX_RANGE)
 	static int DIMENSION = 11;
 	static double MAX_RANGE = 5.0;
 
+	// Random Object, for Stochastic Reasons
 	Random random;
+
+	// Pointer to Evaluation Object 
 	ContestEvaluation evaluation;
 
-	private int evaluations_limit;
-    Elephant average = null;
+	// << Algorithm Parameters >> //
 
-	// Algorithm Parameters
+	// Maximum Number of Evaluations
+	int evaluations_limit;
+
+	// Number of Elephants in Population at any given time
 	int population_size = 211;
-	int tournament_size = 2;
 
+	// Number of Elephants cosidered in every Tournament Selection
+	int tournament_size = 2;
+	
+	// Number of Crossover Points for every DNA Combination
 	int crossover_points = 5;
 
+	// Probability of Mutation per Allele
 	double mutation_probability = 0.35;
+
+	// Maximum Mutation Sigma at Initialization Time
 	double max_sigma = 1.712238291064383;
 
-	double novelty_treshold = 0.0; //treshold
-    double linearblend = 1.0; //Used to determine how much we value novelty over fitness. Lower linearblend means less fitnessbased selection.
+	// Muation Sigma Learning Rate
+	double learning_rate = 0.01;
+
+	// Minimum Novelty for an Elephant to be added to Novelty List
+	double novelty_treshold = 0.0;
+
+	// Used to determine how much we value novelty over fitness.
+	// Lower linearblend means less Fitness-based selection.
+    double linearblend = 1.0;
+
+    // How much linearblend changes each Population Iteration
     double linearblend_delta = 0.1;
+
+    // Number of Neighbours to consider when calculating Novelty
     int nearestNeighbours = 5;
 
-	public player40()
-	{
+
+	public player40() {
 		random = new Random();
 	}
 
-	public void setSeed(long seed)
-	{
+	public void setSeed(long seed) {
 		// Set seed of algortihms random process
 		// random.setSeed(seed);
 	}
 
 	public void setEvaluation(ContestEvaluation evaluation)
 	{
-		// Set evaluation problem used in the run
-		this.evaluation = evaluation;
-
-		// Get evaluation properties
-		Properties props = evaluation.getProperties();
-
+		// Get Hyperparameters from command line
 		if (System.getProperty("population_size") != null)
 			population_size = Integer.parseInt(System.getProperty("population_size"));
 
@@ -75,6 +95,9 @@ public class player40 implements ContestSubmission
 		if (System.getProperty("max_sigma") != null)
 			max_sigma = Double.parseDouble(System.getProperty("max_sigma"));
 
+		if (System.getProperty("learning_rate") != null)
+			learning_rate = Double.parseDouble(System.getProperty("learning_rate"));
+
 		if (System.getProperty("novelty_treshold") != null)
 			novelty_treshold = Double.parseDouble(System.getProperty("novelty_treshold"));
 
@@ -87,6 +110,11 @@ public class player40 implements ContestSubmission
 		if (System.getProperty("nearestNeighbours") != null)
 			nearestNeighbours = Integer.parseInt(System.getProperty("nearestNeighbours"));
 
+
+		// Set evaluation problem used in the run
+		this.evaluation = evaluation;
+		// Get evaluation properties
+		Properties props = evaluation.getProperties();
 		// Get evaluation limit
 		evaluations_limit = Integer.parseInt(props.getProperty("Evaluations"));
 
@@ -102,7 +130,7 @@ public class player40 implements ContestSubmission
 
 			double max_score = 0.0;
 
-			for (int i=0; i<evaluations_limit; i++) {
+			while (true) {
 				double[] totally_random_point = new double[DIMENSION-1];
 				for (int j=0; j<DIMENSION-1; j++)
 					totally_random_point[j] = randomDouble(-MAX_RANGE, MAX_RANGE);
