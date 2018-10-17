@@ -198,12 +198,18 @@ public class player40 implements ContestSubmission
 
 		double[] values = elephant.getValues();
 
-		for (int i=0; i<DIMENSION; i++) {
+		// Mutate sigma
+		double mutated_sigma = values[DIMENSION-1] * exp(learning_rate * random.nextGaussian())
+
+
+		for (int i=0; i<DIMENSION-1; i++) {
 			if (random.nextDouble() < probability) {
 				// TODO: Gaussian should be Elephant-specific attribute
 				double mutated_value;
 
-				do mutated_value = values[i] + values[DIMENSION-1] * random.nextGaussian();
+				do {
+					mutated_value = values[i] + mutated_sigma * random.nextGaussian();
+				}
 				while (mutated_value < -MAX_RANGE || mutated_value > MAX_RANGE);  // New values should still be in function ranges
 
 				values[i] = mutated_value;
