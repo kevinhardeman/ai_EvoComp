@@ -35,8 +35,8 @@ space = [
 	Real(1, 2, name="max_sigma"),
 	Real(0, 1, name="learning_rate"),
 	Real(0, 10, name="novelty_threshold"),
-	Real(0, 0.9, name="linearblend"),
-	Real(0, 0.1, name="linearblend_delta"),
+	Real(0, 1, name="linearblend"),
+	Real(0, 0.0001, name="linearblend_delta"),
 	Integer(2, 6, name="nearestNeighbours")
 ]
 
@@ -46,6 +46,8 @@ def evaluate(**parameters: dict):
 	Evalute Evolutionary Algorithm using 'parameters' as Hyperparameters
 	Since we're dealing with a Stochastic Algorithm, take the mean over several runs as score
 	"""
+
+	parameters["linearblend_delta"] = 0
 
 	score = 0.0
 
