@@ -70,7 +70,7 @@ public class player40 implements ContestSubmission
 
 	public void setSeed(long seed) {
 		// Set seed of algortihms random process
-		// random.setSeed(seed);
+		random.setSeed(seed);
 	}
 
 	public void setEvaluation(ContestEvaluation evaluation)
