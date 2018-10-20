@@ -101,7 +101,16 @@ public class player40 implements ContestSubmission
 			nearestNeighbours = 2;
 		}
 		else if (isMultimodal) { // Katsuura
-
+			population_size = 208;
+			tournament_size = 2;
+			crossover_points = 2;
+			mutation_probability = 0.35;
+			max_sigma = 1.0971574946931633;
+			learning_rate = 0.23423232947955983;
+			novelty_treshold = 2.736732536773115;
+			linearblend = 0.1;
+			linearblend_delta = 0.09877776913042888;
+			nearestNeighbours = 6;
 		}
 		else { // Bent Cigar
 			population_size = 98;
