@@ -75,6 +75,47 @@ public class player40 implements ContestSubmission
 
 	public void setEvaluation(ContestEvaluation evaluation)
 	{
+		// Set evaluation problem used in the run
+		this.evaluation = evaluation;
+		// Get evaluation properties
+		Properties props = evaluation.getProperties();
+		// Get evaluation limit
+		evaluations_limit = Integer.parseInt(props.getProperty("Evaluations"));
+
+		// Property keys depend on specific evaluation
+		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
+		boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
+		boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
+		boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
+
+		if (hasStructure) { // Schaffers
+			population_size = 250;
+			tournament_size = 2;
+			crossover_points = 5;
+			mutation_probability = 0.35;
+			max_sigma = 2.0;
+			learning_rate = 0.23394022657643965;
+			novelty_treshold = 0.0;
+			linearblend = 1.0;
+			linearblend_delta = 0.0;
+			nearestNeighbours = 2;
+		}
+		else if (isMultimodal) { // Katsuura
+
+		}
+		else { // Bent Cigar
+			population_size = 98;
+			tournament_size = 3;
+			crossover_points = 4;
+			mutation_probability = 0.35;
+			max_sigma = 1.7874596076741391;
+			learning_rate = 0.5703412535711101;
+			novelty_treshold = 0.0;
+			linearblend = 1.0;
+			linearblend_delta = 0.0;
+			nearestNeighbours = 2;
+		}
+
 		// Get Hyperparameters from command line
 		if (System.getProperty("population_size") != null)
 			population_size = Integer.parseInt(System.getProperty("population_size"));
@@ -105,20 +146,6 @@ public class player40 implements ContestSubmission
 
 		if (System.getProperty("nearestNeighbours") != null)
 			nearestNeighbours = Integer.parseInt(System.getProperty("nearestNeighbours"));
-
-
-		// Set evaluation problem used in the run
-		this.evaluation = evaluation;
-		// Get evaluation properties
-		Properties props = evaluation.getProperties();
-		// Get evaluation limit
-		evaluations_limit = Integer.parseInt(props.getProperty("Evaluations"));
-
-		// Property keys depend on specific evaluation
-		// E.g. double param = Double.parseDouble(props.getProperty("property_name"));
-		boolean isMultimodal = Boolean.parseBoolean(props.getProperty("Multimodal"));
-		boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
-		boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 	}
 
 	public void run() {
@@ -153,7 +180,7 @@ public class player40 implements ContestSubmission
 			// The first initiate is just to avoid nullpointerexceptions...
 	        Elephant[] noveList = initiate(1, max_sigma); 
 	  		
-	  		for (int i=0; i<evaluations_limit; i++){
+	  		while (true) {
 
 	  			// Initialize Children
 				Elephant[] children = new Elephant[population_size];

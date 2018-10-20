@@ -10,29 +10,31 @@ def run_experiment(target: int, parameters: dict):
 
 def run_experiments(target: int, parameters: dict, repetitions: int):
 	for i in range(repetitions):
-		print("\rRunning Experiment {:2d}/{:2d}".format(i+1, repetitions), end="")
-		yield run_experiment(target, parameters)
+		# print("\rRunning Experiment {:2d}/{:2d}".format(i+1, repetitions), end="")
+		result = run_experiment(target, parameters)
+		print(result)
+		yield result
 
 
 if __name__ == "__main__":
 
 	## Experiment Settings ##
 	directory = "results"
-	name = "NOVELTY"
-	target = 3
+	name = "LBDynamic"
+	target = 2
 	repetitions = 40
 
 	parameters = {
-		'population_size': 250,
+		'population_size': 208,
 		'tournament_size': 2,
-		'crossover_points': 5,
+		'crossover_points': 2,
 		'mutation_probability': 0.35,
-		'max_sigma': 2.0,
-		'learning_rate': 0.19145968897006707,
-		'novelty_threshold': 10.0,
-		'linearblend': 0.0,
-		'linearblend_delta': 0.0,
-		'nearestNeighbours': 6,
+		'max_sigma': 1.0971574946931633,
+		'learning_rate': 0.23423232947955983,
+		'novelty_threshold': 2.736732536773115,
+		'linearblend': 0.1,
+		'linearblend_delta': 0.09877776913042888,
+		'nearestNeighbours': 6
 	}
 
 	## Perform Experiment and write to json ##
